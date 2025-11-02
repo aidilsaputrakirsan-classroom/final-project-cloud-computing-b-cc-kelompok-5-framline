@@ -16,27 +16,48 @@ class FilmController extends Controller
 
     public function index(Request $req)
     {
-        $query = Film::query()->with('genres');
+        // $query = Film::query()->with('genres');
 
-        if ($req->filled('q')) {
-            $q = $req->q;
-            $query->where('title','like', "%{$q}%")
-                  ->orWhere('director','like', "%{$q}%");
-        }
+        // if ($req->filled('q')) {
+        //     $q = $req->q;
+        //     $query->where('title','like', "%{$q}%")
+        //           ->orWhere('director','like', "%{$q}%");
+        // }
 
-        if ($req->filled('genre')) {
-            $genre = $req->genre;
-            $query->whereHas('genres', fn($q) => $q->where('name', $genre));
-        }
+        // if ($req->filled('genre')) {
+        //     $genre = $req->genre;
+        //     $query->whereHas('genres', fn($q) => $q->where('name', $genre));
+        // }
 
-        if ($req->filled('sort')) {
-            if ($req->sort === 'newest') $query->orderBy('release_date','desc');
-            if ($req->sort === 'duration_asc') $query->orderBy('duration','asc');
-        }
+        // if ($req->filled('sort')) {
+        //     if ($req->sort === 'newest') $query->orderBy('release_date','desc');
+        //     if ($req->sort === 'duration_asc') $query->orderBy('duration','asc');
+        // }
 
-        $films = $query->paginate(12);
-        $genres = Genre::all();
-        return view('films.index', compact('films','genres'));
+        // $films = $query->paginate(12);
+        // $genres = Genre::all();
+        // $query = Film::query()->with('genres');
+
+        // if ($req->filled('q')) {
+        //     $q = $req->q;
+        //     $query->where('title','like', "%{$q}%")
+        //           ->orWhere('director','like', "%{$q}%");
+        // }
+
+        // if ($req->filled('genre')) {
+        //     $genre = $req->genre;
+        //     $query->whereHas('genres', fn($q) => $q->where('name', $genre));
+        // }
+
+        // if ($req->filled('sort')) {
+        //     if ($req->sort === 'newest') $query->orderBy('release_date','desc');
+        //     if ($req->sort === 'duration_asc') $query->orderBy('duration','asc');
+        // }
+
+        // $films = $query->paginate(12);
+        // $genres = Genre::all();
+        // return view('films.index', compact('films','genres'));
+        return view('dashboard');
     }
 
     public function show(Film $film)
