@@ -21,31 +21,50 @@
     </div>
   </section>
 
-  <!-- 🎬 Browse by Genre -->
-  <section x-data="{ showAllGenre: false }" class="mt-14 px-8 md:px-16">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-semibold text-gray-800">Browse by Genre</h2>
-      <button @click="showAllGenre = !showAllGenre"
-              class="text-teal-700 font-medium hover:underline focus:outline-none">
-        <span x-text="showAllGenre ? 'Show Less ←' : 'See All →'"></span>
-      </button>
-    </div>
+    <!-- 🎬 Browse by Genre & Year -->
+    <section x-data="{ showAllGenre: false, selectedYear: '' }" class="mt-16 px-8 md:px-16">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+            <h2 class="text-2xl font-semibold text-gray-800">Browse by Genre & Year</h2>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-      @foreach (['Action', 'Drama', 'Comedy', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Animation', 'Fantasy', 'Mystery'] as $index => $genre)
-        <div x-show="showAllGenre || {{ $index }} < 6"
-             x-transition
-             class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
-          <div class="p-4 text-center">
-            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
-              {{ strtoupper(substr($genre, 0, 1)) }}
+            <div class="flex items-center gap-4">
+                <!-- Dropdown Tahun -->
+                <div class="relative">
+                    <select x-model="selectedYear"
+                            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 focus:ring-teal-500 focus:border-teal-500">
+                        <option value="">All Years</option>
+                        @foreach (range(date('Y'), date('Y') - 10) as $year)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Tombol Lihat Semua -->
+                <button @click="showAllGenre = !showAllGenre"
+                        class="text-teal-700 font-medium hover:underline focus:outline-none">
+                    <span x-text="showAllGenre ? 'Show Less ←' : 'See All →'"></span>
+                </button>
             </div>
-            <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre }}</h3>
-          </div>
         </div>
-      @endforeach
-    </div>
-  </section>
+
+        <!-- Grid Genre -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+            @foreach (['Action', 'Drama', 'Comedy', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Animation', 'Fantasy', 'Mystery'] as $index => $genre)
+                <div x-show="showAllGenre || {{ $index }} < 6"
+                     x-transition
+                     class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
+                     @click="window.location.href='{{ url('/films?genre=' . strtolower($genre)) }}' + (selectedYear ? '&year=' + selectedYear : '')">
+                    <div class="p-4 text-center">
+                        <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
+                            {{ strtoupper(substr($genre, 0, 1)) }}
+                        </div>
+                        <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre }}</h3>
+                        <!-- Tahun muncul kalau dipilih -->
+                        <p x-show="selectedYear" class="text-gray-500 text-xs mt-1" x-text="'Year: ' + selectedYear"></p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
 
   <!-- 🎥 Now Playing Section -->
   <section x-data="{ showAll: false }" class="mt-14 px-8 md:px-16">
