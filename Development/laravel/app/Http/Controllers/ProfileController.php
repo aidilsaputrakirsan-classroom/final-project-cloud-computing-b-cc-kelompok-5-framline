@@ -21,6 +21,15 @@ class ProfileController extends Controller
         $user = Auth::user();
         return view('user.profile-edit', compact('user'));
     }
+    public function favorites()
+{
+    return view('profile.favorites'); // nanti buat view-nya
+}
+
+public function history()
+{
+    return view('profile.history'); // nanti buat view-nya juga
+}
 
     // update profil
     public function update(Request $request)

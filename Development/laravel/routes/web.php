@@ -36,6 +36,10 @@ Route::middleware(['auth'])->group(function () {
 
     // (opsional) Update foto profil
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    // Halaman Film Favorit dan Riwayat Tontonan
+Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
+Route::get('/profile/history', [ProfileController::class, 'history'])->name('profile.history');
+
 });
 
 // ==============================
