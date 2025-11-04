@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('films', function (Blueprint $table) {
             $table->id();
+            $table->string('judul');
+            $table->text('sinopsis');
+            $table->integer('tahun_rilis');
+            $table->string('sutradara');
+            $table->string('aktor')->nullable();
+            $table->string('durasi')->nullable();
+            $table->string('poster')->nullable();
+            $table->foreignId('genre_id')->constrained('genres')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

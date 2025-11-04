@@ -22,14 +22,18 @@ class ProfileController extends Controller
         return view('user.profile-edit', compact('user'));
     }
     public function favorites()
-{
-    return view('profile.favorites'); // nanti buat view-nya
-}
+    {
+        $user = Auth::user();
+        $favorites = $user->favoriteFilms()->with('genre')->get();
+        return view('profile.favorites', compact('favorites'));
+    }
 
-public function history()
-{
-    return view('profile.history'); // nanti buat view-nya juga
-}
+    public function history()
+    {
+        $user = Auth::user();
+        $history = $user->watchedFilms()->with('genre')->orderByPivot('watched_at', 'desc')->get();
+        return view('profile.history', compact('history'));
+    }
 
     // update profil
     public function update(Request $request)

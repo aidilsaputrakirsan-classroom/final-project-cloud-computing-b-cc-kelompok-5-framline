@@ -37,4 +37,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(AuditLog::class);
     }
+    public function favoriteFilms()
+    {
+        return $this->belongsToMany(Film::class, 'film_user_favorites');
+    }
+
+    public function watchedFilms()
+    {
+        return $this->belongsToMany(Film::class, 'film_user_history')->withPivot('watched_at')->withTimestamps();
+    }
+
 }

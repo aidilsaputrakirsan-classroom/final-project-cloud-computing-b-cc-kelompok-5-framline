@@ -18,15 +18,27 @@ class Film extends Model
         'aktor',
         'durasi',
         'genre_id',
+        'user_id',
     ];
-
-    public function genres()
-    {
-        return $this->belongsToMany(Genre::class, 'film_genre');
-    }
 
     public function genre()
     {
         return $this->belongsTo(Genre::class);
+    }
+
+    // ✅ Relasi ke user (film yang diupload user)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'film_user_favorites');
+    }
+
+    public function watchedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'film_user_history')->withPivot('watched_at')->withTimestamps();
     }
 }
