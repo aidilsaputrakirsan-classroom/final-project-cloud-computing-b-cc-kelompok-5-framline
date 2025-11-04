@@ -14,7 +14,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -34,7 +34,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role && $this->role->name === 'admin';
+        return $this->role_id && $this->role && $this->role->name === 'admin';
     }
 
     public function auditLogs()

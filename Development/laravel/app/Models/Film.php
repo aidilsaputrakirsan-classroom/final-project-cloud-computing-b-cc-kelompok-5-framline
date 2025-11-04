@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'title','description','director','release_date','duration','poster_url','trailer_url'
+        'poster',
+        'judul',
+        'sinopsis',
+        'tahun_rilis',
+        'sutradara',
+        'aktor',
+        'durasi',
+        'genre_id',
     ];
 
     public function genres()
@@ -15,8 +25,8 @@ class Film extends Model
         return $this->belongsToMany(Genre::class, 'film_genre');
     }
 
-    public function auditLogs()
+    public function genre()
     {
-        return $this->hasMany(AuditLog::class);
+        return $this->belongsTo(Genre::class);
     }
 }

@@ -6,20 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::create('films', function (Blueprint $table) {
-            $table->id(); // film_id
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->string('director')->nullable();
-            $table->date('release_date')->nullable();
-            $table->integer('duration')->nullable(); // minutes
-            $table->string('poster_url')->nullable();
-            $table->string('trailer_url')->nullable();
-            $table->timestamps();
-        });
-    }
+public function up()
+{
+    Schema::create('films', function (Blueprint $table) {
+        $table->id();
+        $table->string('judul');
+        $table->text('sinopsis');
+        $table->year('tahun_rilis');
+        $table->string('sutradara');
+        $table->string('aktor');
+        $table->string('durasi');
+        $table->string('poster')->nullable(); // untuk upload foto poster
+        $table->foreignId('genre_id')->constrained()->onDelete('cascade');
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {

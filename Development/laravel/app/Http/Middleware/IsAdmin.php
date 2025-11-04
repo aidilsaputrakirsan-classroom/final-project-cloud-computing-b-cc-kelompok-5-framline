@@ -9,8 +9,12 @@ class IsAdmin
 {
     public function handle($request, Closure $next)
     {
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            return redirect('/home')->with('error', 'Access denied.');
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Halaman ini hanya untuk admin.');
         }
 
         return $next($request);

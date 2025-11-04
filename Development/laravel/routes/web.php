@@ -8,59 +8,68 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 
-// ==============================
-// 🏠 Public routes
-// ==============================
-Route::get('/', [FilmController::class, 'index'])->name('landing');
+/*
+|--------------------------------------------------------------------------
+| 🌐 Public Routes
+|--------------------------------------------------------------------------
+*/
+
+// 🏠 Landing page
+Route::get('/', function () {
+    return view('index'); // resources/views/index.blade.php
+})->name('landing');
+
+// 🎬 Film routes (umum, bisa dilihat tanpa login)
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
 Route::get('/search', [FilmController::class, 'index'])->name('films.search');
 
-// ==============================
-// 🔐 Authentication routes
-// ==============================
+/*
+|--------------------------------------------------------------------------
+| 🔐 Authentication Routes
+|--------------------------------------------------------------------------
+*/
 Auth::routes();
 
-// Setelah login → arahkan ke HomeController
+// Setelah login → arahkan ke dashboard user biasa
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// ==============================
-// 👤 User profile (hanya untuk user login biasa)
-// ==============================
+/*
+|--------------------------------------------------------------------------
+| 👤 User Routes (hanya user login)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
-    // Halaman profil
+    // Profil
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-
-    // (opsional) Form edit profil & update data
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    // (opsional) Update foto profil
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
-    // Halaman Film Favorit dan Riwayat Tontonan
-Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
-Route::get('/profile/history', [ProfileController::class, 'history'])->name('profile.history');
 
+    // Favorit & Riwayat tontonan
+    Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
+    Route::get('/profile/history', [ProfileController::class, 'history'])->name('profile.history');
 });
 
-// ==============================
-// 🧑‍💼 Admin routes (hanya admin)
-// ==============================
+/*
+|--------------------------------------------------------------------------
+| 🧑‍💼 Admin Routes (hanya untuk admin)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'is_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-
-        // Dashboard admin
+        // Dashboard utama admin
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // CRUD Films (khusus admin)
-        Route::get('/films', [FilmController::class, 'index'])->name('films.index');
-        Route::get('/films/create', [FilmController::class, 'create'])->name('films.create');
-        Route::post('/films', [FilmController::class, 'store'])->name('films.store');
-        Route::get('/films/{film}/edit', [FilmController::class, 'edit'])->name('films.edit');
-        Route::put('/films/{film}', [FilmController::class, 'update'])->name('films.update');
-        Route::delete('/films/{film}', [FilmController::class, 'destroy'])->name('films.destroy');
+        // Kelola film
+        Route::resource('/films', FilmController::class);
 
-        // CRUD Genre (khusus admin)
-        Route::resource('genres', GenreController::class)->only(['index', 'store', 'destroy']);
+        // Kelola genre
+        Route::resource('/genres', GenreController::class)->only(['index', 'store', 'destroy']);
+
+        // Kelola user
+        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
+        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.role');
+        Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
     });

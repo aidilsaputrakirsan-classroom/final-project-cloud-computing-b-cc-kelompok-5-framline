@@ -4,114 +4,93 @@ namespace App\Http\Controllers;
 
 use App\Models\Film;
 use App\Models\Genre;
-use App\Models\AuditLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
-    public function __construct()
+    // Menampilkan semua film
+    public function index()
     {
-        $this->middleware('auth')->except(['index','show','search']);
+        $films = Film::with('genre')->latest()->paginate(10);
+        return view('admin.films.index', compact('films'));
     }
 
-    public function index(Request $req)
-    {
-        $query = Film::query()->with('genres');
-
-        if ($req->filled('q')) {
-            $q = $req->q;
-            $query->where('title','like', "%{$q}%")
-                  ->orWhere('director','like', "%{$q}%");
-        }
-
-        if ($req->filled('genre')) {
-            $genre = $req->genre;
-            $query->whereHas('genres', fn($q) => $q->where('name', $genre));
-        }
-
-        if ($req->filled('sort')) {
-            if ($req->sort === 'newest') $query->orderBy('release_date','desc');
-            if ($req->sort === 'duration_asc') $query->orderBy('duration','asc');
-        }
-
-        $films = $query->paginate(12);
-        $genres = Genre::all();
-        return view('films.index', compact('films','genres'));
-    }
-
-    public function show(Film $film)
-    {
-        return view('films.show', compact('film'));
-    }
-
-    // Admin CRUD
+    // Form tambah film
     public function create()
     {
-        $this->authorizeAdmin();
         $genres = Genre::all();
         return view('admin.films.create', compact('genres'));
     }
 
-    public function store(Request $req)
+    // Simpan film baru
+    public function store(Request $request)
     {
-        $this->authorizeAdmin();
-        $data = $req->validate([
-            'title'=>'required|string',
-            'description'=>'nullable|string',
-            'director'=>'nullable|string',
-            'release_date'=>'nullable|date',
-            'duration'=>'nullable|integer',
-            'poster_url'=>'nullable|url',
-            'trailer_url'=>'nullable|url',
-            'genres'=>'nullable|array'
+        $request->validate([
+            'poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'judul' => 'required|string|max:255',
+            'sinopsis' => 'required|string',
+            'tahun_rilis' => 'required|numeric',
+            'sutradara' => 'required|string|max:255',
+            'aktor' => 'required|string|max:255',
+            'durasi' => 'required|string|max:50',
+            'genre_id' => 'required|exists:genres,id',
         ]);
 
-        $film = Film::create($data);
-        if (!empty($data['genres'])) $film->genres()->sync($data['genres']);
+        $posterPath = $request->hasFile('poster')
+            ? $request->file('poster')->store('posters', 'public')
+            : null;
 
-        AuditLog::create(['user_id'=>auth()->id(),'film_id'=>$film->id,'action'=>'tambah','meta'=>json_encode(['title'=>$film->title])]);
+        Film::create([
+            'poster' => $posterPath,
+            'judul' => $request->judul,
+            'sinopsis' => $request->sinopsis,
+            'tahun_rilis' => $request->tahun_rilis,
+            'sutradara' => $request->sutradara,
+            'aktor' => $request->aktor,
+            'durasi' => $request->durasi,
+            'genre_id' => $request->genre_id,
+        ]);
 
-        return redirect()->route('admin.films.index')->with('success','Film berhasil ditambah');
+        return redirect()->route('admin.films.index')->with('success', 'Film berhasil ditambahkan!');
     }
 
+    // Form edit film
     public function edit(Film $film)
     {
-        $this->authorizeAdmin();
         $genres = Genre::all();
-        return view('admin.films.edit', compact('film','genres'));
+        return view('admin.films.edit', compact('film', 'genres'));
     }
 
-    public function update(Request $req, Film $film)
+    // Update film
+    public function update(Request $request, Film $film)
     {
-        $this->authorizeAdmin();
-        $data = $req->validate([
-            'title'=>'required|string',
-            'description'=>'nullable|string',
-            'director'=>'nullable|string',
-            'release_date'=>'nullable|date',
-            'duration'=>'nullable|integer',
-            'poster_url'=>'nullable|url',
-            'trailer_url'=>'nullable|url',
-            'genres'=>'nullable|array'
+        $request->validate([
+            'poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'judul' => 'required|string|max:255',
+            'sinopsis' => 'required|string',
+            'tahun_rilis' => 'required|numeric',
+            'sutradara' => 'required|string|max:255',
+            'aktor' => 'required|string|max:255',
+            'durasi' => 'required|string|max:50',
+            'genre_id' => 'required|exists:genres,id',
         ]);
 
-        $film->update($data);
-        if (isset($data['genres'])) $film->genres()->sync($data['genres']);
+        if ($request->hasFile('poster')) {
+            if ($film->poster) Storage::disk('public')->delete($film->poster);
+            $film->poster = $request->file('poster')->store('posters', 'public');
+        }
 
-        AuditLog::create(['user_id'=>auth()->id(),'film_id'=>$film->id,'action'=>'edit','meta'=>json_encode(['title'=>$film->title])]);
-        return redirect()->route('admin.films.index')->with('success','Film berhasil diupdate');
+        $film->update($request->only(['judul', 'sinopsis', 'tahun_rilis', 'sutradara', 'aktor', 'durasi', 'genre_id']));
+
+        return redirect()->route('admin.films.index')->with('success', 'Film berhasil diperbarui!');
     }
 
+    // Hapus film
     public function destroy(Film $film)
     {
-        $this->authorizeAdmin();
-        AuditLog::create(['user_id'=>auth()->id(),'film_id'=>$film->id,'action'=>'hapus','meta'=>json_encode(['title'=>$film->title])]);
+        if ($film->poster) Storage::disk('public')->delete($film->poster);
         $film->delete();
-        return back()->with('success','Film dihapus');
-    }
-
-    protected function authorizeAdmin()
-    {
-        if (!auth()->check() || !auth()->user()->isAdmin()) abort(403);
+        return redirect()->route('admin.films.index')->with('success', 'Film berhasil dihapus!');
     }
 }
