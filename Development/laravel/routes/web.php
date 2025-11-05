@@ -7,6 +7,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MovieController;
 
 // ==============================
 // 🏠 Public routes
@@ -14,6 +15,8 @@ use App\Http\Controllers\ProfileController;
 Route::get('/', [FilmController::class, 'index'])->name('landing');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
 Route::get('/search', [FilmController::class, 'index'])->name('films.search');
+Route::get('/', [MovieController::class, 'index'])->name('movies.index');
+Route::get('/search', [MovieController::class, 'search'])->name('movies.search');
 
 // ==============================
 // 🔐 Authentication routes

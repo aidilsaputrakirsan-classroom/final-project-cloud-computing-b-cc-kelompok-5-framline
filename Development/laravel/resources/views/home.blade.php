@@ -1,25 +1,56 @@
 @extends('layouts.app')
 @section('title', 'Cinema XXI - Home')
+
 @section('content')
-    <h1 class="text-2xl font-bold text-center mt-10">Selamat Datang!</h1>
-  <!-- Navbar -->
+  <h1 class="text-2xl font-bold text-center mt-10">Selamat Datang!</h1>
 
   <!-- Hero Section -->
-  <section class="text-center mt-12">
-    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Welcome back, {{ Auth::user()->name }}!</h1>
+  <section x-data="movieSearch()" class="text-center mt-12 px-8 md:px-16">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
+      @if(Auth::check())
+        Welcome back, {{ Auth::user()->name }}!
+      @else
+        Welcome to Cinema XXI!
+      @endif
+    </h1>
     <p class="mt-2 text-gray-600">Enjoy the latest movies and genres from Cinema XXI</p>
-    <div class="mt-6 flex justify-center">
-      <div class="relative w-80 md:w-1/2">
-        <input type="text" placeholder="Search movies or cinemas"
-               class="w-full px-6 py-3 rounded-full shadow text-gray-700 focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-5 h-5 absolute right-5 top-3.5 text-gray-400" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-        </svg>
-      </div>
+
+    <!-- 🔍 Search Bar -->
+    <div class="mt-6 flex justify-center relative">
+      <input
+        type="text"
+        x-model="query"
+        @input.debounce.500ms="searchMovies"
+        placeholder="Search movies or cinemas..."
+        class="w-80 md:w-1/2 px-6 py-3 rounded-full shadow text-gray-700 focus:outline-none"
+      >
+      <svg xmlns="http://www.w3.org/2000/svg"
+           class="w-5 h-5 absolute right-5 top-3.5 text-gray-400" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
+      </svg>
     </div>
+
+    <!-- 🎞 Hasil Pencarian -->
+    <div x-show="movies.length > 0" x-transition class="mt-10 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      <template x-for="movie in movies" :key="movie.imdbID">
+        <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-2">
+          <img :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/200x280?text=No+Image'"
+               class="rounded-lg w-full h-auto" :alt="movie.Title">
+          <h3 class="mt-2 text-sm font-semibold text-gray-700" x-text="movie.Title"></h3>
+          <p class="text-xs text-gray-500" x-text="movie.Year"></p>
+        </div>
+      </template>
+    </div>
+
+    <!-- Tidak ada hasil -->
+    <p x-show="query && movies.length === 0 && !loading" class="mt-6 text-gray-500">
+      Tidak ada hasil untuk "<span x-text="query"></span>"
+    </p>
+
+    <!-- Loading -->
+    <p x-show="loading" class="mt-6 text-teal-600">Loading...</p>
   </section>
 
   <!-- 🎬 Browse by Genre -->
@@ -71,4 +102,32 @@
 
   {{-- Load Alpine.js --}}
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+  {{-- Script untuk fitur pencarian --}}
+  <script>
+    function movieSearch() {
+      return {
+        query: '',
+        movies: [],
+        loading: false,
+        searchMovies() {
+          if (!this.query.trim()) {
+            this.movies = [];
+            return;
+          }
+          this.loading = true;
+          fetch(`/search-movies?query=${encodeURIComponent(this.query)}`)
+            .then(res => res.json())
+            .then(data => {
+              this.movies = data.movies || [];
+              this.loading = false;
+            })
+            .catch(() => {
+              this.movies = [];
+              this.loading = false;
+            });
+        }
+      }
+    }
+  </script>
 @endsection
