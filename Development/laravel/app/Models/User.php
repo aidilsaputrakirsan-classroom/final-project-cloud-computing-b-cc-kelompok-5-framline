@@ -14,7 +14,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -25,20 +25,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
     ];
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
 
     public function isAdmin(): bool
     {
-        return $this->role && $this->role->name === 'admin';
+        return (bool) $this->is_admin;
     }
 
     public function auditLogs()
     {
         return $this->hasMany(AuditLog::class);
     }
+    public function favoriteFilms()
+    {
+        return $this->belongsToMany(Film::class, 'film_user_favorites');
+    }
+
+    public function watchedFilms()
+    {
+        return $this->belongsToMany(Film::class, 'film_user_history')->withPivot('watched_at')->withTimestamps();
+    }
+
 }

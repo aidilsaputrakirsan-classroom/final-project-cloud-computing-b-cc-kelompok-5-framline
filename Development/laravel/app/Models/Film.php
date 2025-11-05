@@ -2,21 +2,43 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Film extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'title','description','director','release_date','duration','poster_url','trailer_url'
+        'poster',
+        'judul',
+        'sinopsis',
+        'tahun_rilis',
+        'sutradara',
+        'aktor',
+        'durasi',
+        'genre_id',
+        'user_id',
     ];
 
-    public function genres()
+    public function genre()
     {
-        return $this->belongsToMany(Genre::class, 'film_genre');
+        return $this->belongsTo(Genre::class);
     }
 
-    public function auditLogs()
+    // ✅ Relasi ke user (film yang diupload user)
+    public function user()
     {
-        return $this->hasMany(AuditLog::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'film_user_favorites');
+    }
+
+    public function watchedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'film_user_history')->withPivot('watched_at')->withTimestamps();
     }
 }
