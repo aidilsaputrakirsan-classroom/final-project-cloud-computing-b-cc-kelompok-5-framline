@@ -30,7 +30,7 @@ class FilmController extends Controller
             'poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'judul' => 'required|string|max:255',
             'sinopsis' => 'required|string',
-            'tahun_rilis' => 'required|numeric',
+            'tahun_rilis' => 'required|date',
             'sutradara' => 'required|string|max:255',
             'aktor' => 'required|string|max:255',
             'durasi' => 'required|string|max:50',
@@ -69,7 +69,7 @@ class FilmController extends Controller
             'poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'judul' => 'required|string|max:255',
             'sinopsis' => 'required|string',
-            'tahun_rilis' => 'required|numeric',
+            'tahun_rilis' => 'required|date',
             'sutradara' => 'required|string|max:255',
             'aktor' => 'required|string|max:255',
             'durasi' => 'required|string|max:50',
@@ -82,6 +82,7 @@ class FilmController extends Controller
         }
 
         $film->update($request->only(['judul', 'sinopsis', 'tahun_rilis', 'sutradara', 'aktor', 'durasi', 'genre_id']));
+        $film->save();
 
         return redirect()->route('admin.films.index')->with('success', 'Film berhasil diperbarui!');
     }

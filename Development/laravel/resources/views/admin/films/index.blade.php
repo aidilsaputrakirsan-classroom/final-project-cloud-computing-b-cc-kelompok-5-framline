@@ -4,7 +4,7 @@
 <div class="p-8">
   <h1 class="text-2xl font-bold mb-6">🎬 Kelola Film</h1>
 
-  <a href="{{ route('admin.films.create') }}" class="bg-teal-600 text-white px-4 py-2 rounded-lg mb-4 inline-block hover:bg-teal-700">+ Tambah Film</a>
+  <a href="{{ route('admin.films.create') }}" class="bg-teal-600 text-dark px-4 py-2 rounded-lg mb-4 inline-block hover:bg-teal-700">+ Tambah Film</a>
 
   @if(session('success'))
       <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>

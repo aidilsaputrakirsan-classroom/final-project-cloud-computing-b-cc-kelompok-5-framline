@@ -24,7 +24,7 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label>Tahun Rilis</label>
-        <input type="number" name="tahun_rilis" class="block w-full border rounded p-2" required>
+        <input type="date" name="tahun_rilis" class="block w-full border rounded p-2" required>
       </div>
       <div>
         <label>Durasi (menit)</label>
@@ -43,16 +43,19 @@
     </div>
 
     <div>
-      <label>Genre</label>
-      <select name="genre_id" class="block w-full border rounded p-2" required>
+      <label class="block mb-1 text-gray-800">Genre</label>
+      <select name="genre_id"
+              class="block w-full border rounded p-2 text-black bg-white"
+              required>
         <option value="">-- Pilih Genre --</option>
         @foreach ($genres as $genre)
-          <option value="{{ $genre->id }}">{{ $genre->nama }}</option>
+          <option value="{{ $genre->id }}">{{ $genre->name }}</option>
         @endforeach
       </select>
     </div>
 
-    <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Simpan</button>
+
+    <button class="bg-teal-600 text-dark px-4 py-2 rounded hover:bg-teal-700">Simpan</button>
   </form>
 </div>
 @endsection

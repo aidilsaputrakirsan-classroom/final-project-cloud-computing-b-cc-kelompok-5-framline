@@ -7,6 +7,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,7 @@ use App\Http\Controllers\ProfileController;
 */
 
 // 🏠 Landing page
-Route::get('/', function () {
-    return view('index'); // resources/views/index.blade.php
-})->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // 🎬 Film routes (umum, bisa dilihat tanpa login)
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');

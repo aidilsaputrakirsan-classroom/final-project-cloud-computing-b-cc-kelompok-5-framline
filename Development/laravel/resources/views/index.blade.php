@@ -76,14 +76,16 @@
     </div>
 
     <div class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      @foreach (range(1, 12) as $i)
-        <div x-show="showAll || {{ $i }} <= 5"
-             x-transition
-             class="bg-white rounded-xl shadow hover:shadow-lg transition p-2">
-          <img src="https://dummyimage.com/200x280/{{ ['ccc','aaa','999','777','555','444','333','222','111','000','888','666'][$i-1] }}/fff&text=Movie+{{ $i }}"
-               class="rounded-lg w-full h-auto">
-        </div>
-      @endforeach
+      @forelse ($films as $film)
+      <div class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 hover:scale-105 duration-300 p-2">
+        <img src="{{ asset('storage/' . $film->poster) }}"
+             alt="{{ $film->judul }}"
+             class="rounded-lg w-full h-72 object-cover">
+        <p class="mt-2 text-center font-semibold text-gray-800">{{ $film->judul }}</p>
+      </div>
+    @empty
+      <p class="col-span-full text-center text-gray-500">Belum ada film yang ditambahkan.</p>
+    @endforelse
     </div>
   </section>
 
