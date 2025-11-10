@@ -65,7 +65,11 @@ Route::middleware(['auth', 'is_admin'])
         Route::resource('/films', FilmController::class);
 
         // Kelola genre
+<<<<<<< HEAD
         Route::resource('/genres', GenreController::class)->only(['index', 'store', 'destroy']);
+=======
+        Route::resource('/genres', GenreController::class);
+>>>>>>> d168e3780e5f1f3c9b51910f8c992ac94aaa8773
 
         // Kelola user
         Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');

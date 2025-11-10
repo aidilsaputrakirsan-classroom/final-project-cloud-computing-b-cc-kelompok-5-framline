@@ -8,8 +8,8 @@
 
     {{-- Tombol Tambah Genre untuk Admin --}}
     <div class="mb-8">
-        <a href="{{ route('genre.create') }}"
-           class="bg-teal-700 text-white px-5 py-2 rounded-full hover:bg-teal-800 transition">
+        <a href="{{ route('admin.genres.create') }}"
+           class="bg-teal-700 text-dark px-5 py-2 rounded-full hover:bg-teal-800 transition">
            + Tambah Genre
         </a>
     </div>
@@ -25,9 +25,9 @@
                     </div>
 
                     <div class="mt-6 flex justify-between">
-                        <a href="{{ route('genre.edit', $genre->id) }}"
+                        <a href="{{ route('admin.genres.edit', $genre->id) }}"
                            class="text-teal-700 font-medium hover:underline">Edit</a>
-                        <form action="{{ route('genre.destroy', $genre->id) }}" method="POST" onsubmit="return confirm('Yakin hapus genre ini?')">
+                        <form action="{{ route('admin.genres.destroy', $genre->id) }}" method="POST" onsubmit="return confirm('Yakin hapus genre ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -68,8 +68,8 @@
                                     <p class="text-gray-600 text-sm">${genre.description ?? 'Tidak ada deskripsi'}</p>
                                 </div>
                                 <div class="mt-6 flex justify-between">
-                                    <a href="/genre/${genre.id}/edit" class="text-teal-700 font-medium hover:underline">Edit</a>
-                                    <form method="POST" action="/genre/${genre.id}" onsubmit="return confirm('Yakin hapus genre ini?')">
+                                    <a href="/admin/genres/${genre.id}/edit" class="text-teal-700 font-medium hover:underline">Edit</a>
+                                    <form method="POST" action="/admin/genres/${genre.id}" onsubmit="return confirm('Yakin hapus genre ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -91,8 +91,8 @@
                                     <p class="text-gray-600 text-sm">${genre.description ?? 'Tidak ada deskripsi'}</p>
                                 </div>
                                 <div class="mt-6 flex justify-between">
-                                    <a href="/genre/${genre.id}/edit" class="text-teal-700 font-medium hover:underline">Edit</a>
-                                    <form method="POST" action="/genre/${genre.id}" onsubmit="return confirm('Yakin hapus genre ini?')">
+                                    <a href="/admin/genres/${genre.id}/edit" class="text-teal-700 font-medium hover:underline">Edit</a>
+                                    <form method="POST" action="/admin/genres/${genre.id}" onsubmit="return confirm('Yakin hapus genre ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:underline">Hapus</button>
