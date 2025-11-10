@@ -1,103 +1,138 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
-@section('title', 'Cinema XXI - Feel the movies beyond')
+@section('title', 'Cinema XXI - Feel the Movies Beyond')
+
+@push('styles')
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          netflix: '#e50914',
+          dark: '#141414',
+        },
+        fontFamily: {
+          sans: ['Poppins', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+@endpush
+
 
 @section('content')
+<body class="bg-dark text-white font-sans">
 
-  <!-- Hero Section -->
-  <section class="text-center mt-10">
-    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Feel the movies beyond</h1>
-    <div class="mt-6 flex justify-center">
-      <form action="{{ route('films.search') }}" method="GET" class="relative w-80 md:w-1/2">
-        <input type="text" name="search" placeholder="Search movies by title or genre"
-               class="w-full px-6 py-3 rounded-full shadow text-gray-700 focus:outline-none">
-        <button type="submit" class="absolute right-5 top-3.5">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               class="w-5 h-5 text-gray-400" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-          </svg>
-        </button>
-      </form>
+<section class="min-h-screen bg-gradient-to-b from-black via-dark to-black text-white px-8 md:px-16 py-12">
+
+    <!-- ✅ HEADER -->
+    <div class="flex justify-between items-center">
+        <img src="/logo.png" alt="Cinema XXI" class="h-10">
+
+        <div class="space-x-4">
+            <a href="{{ route('login') }}"
+                class="px-4 py-2 border border-netflix rounded-full hover:bg-netflix transition">
+                Login
+            </a>
+
+            <a href="{{ route('register') }}"
+                class="px-4 py-2 bg-netflix rounded-full hover:bg-red-600 transition">
+                Register
+            </a>
+        </div>
     </div>
-  </section>
 
-    <!-- 🎬 Browse by Genre & Year -->
-    <section x-data="{ showAllGenre: false, selectedYear: '' }" class="mt-16 px-8 md:px-16">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <h2 class="text-2xl font-semibold text-gray-800">Browse by Genre & Year</h2>
+    <!-- ✅ HERO -->
+    <div class="text-center mt-24">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4">
+            Feel the <span class="text-netflix">Movies</span> Beyond
+        </h1>
 
-            <div class="flex items-center gap-4">
-                <!-- Dropdown Tahun -->
-                <div class="relative">
-                    <select x-model="selectedYear"
-                            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 focus:ring-teal-500 focus:border-teal-500">
-                        <option value="">All Years</option>
-                        @foreach (range(date('Y'), date('Y') - 10) as $year)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endforeach
-                    </select>
-                </div>
+        <p class="text-gray-400 text-lg mb-8">
+            Discover, explore, and experience films like never before.
+        </p>
 
-                <!-- Tombol Lihat Semua -->
-                <button @click="showAllGenre = !showAllGenre"
-                        class="text-teal-700 font-medium hover:underline focus:outline-none">
-                    <span x-text="showAllGenre ? 'Show Less ←' : 'See All →'"></span>
-                </button>
+        <form method="GET" action="{{ route('films.search') }}"
+              class="max-w-2xl mx-auto flex items-center bg-slate-800/70 rounded-full px-5 py-3 shadow-lg backdrop-blur-md">
+
+            <input type="text" name="search" value="{{ request('search') }}"
+                   placeholder="Search movies or cinemas..."
+                   class="flex-grow bg-transparent outline-none text-white placeholder-gray-400">
+
+            <button class="p-3 bg-netflix rounded-full hover:bg-red-600 transition">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- ✅ GENRE SECTION -->
+    <div class="mt-24">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold">Browse by Genre & Year</h2>
+
+            <div class="flex items-center gap-2">
+                <select id="year-filter"
+                    class="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white">
+                    <option value="">All Years</option>
+                    @foreach (range(date('Y'), date('Y') - 10) as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+
+                <a href="#" class="text-netflix hover:underline">See All →</a>
             </div>
         </div>
 
-        <!-- Grid Genre -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            @foreach ($genres as $index => $genre)
-                <div x-show="showAllGenre || {{ $index }} < 6"
-                     x-transition
-                     class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
-                     @click="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}' + (selectedYear ? '&year=' + selectedYear : '')">
-                    <div class="p-4 text-center">
-                        @if($genre->image)
-                            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full overflow-hidden bg-gray-100">
-                                <img src="{{ asset('storage/' . $genre->image) }}" alt="{{ $genre->name }}" class="w-full h-full object-cover">
-                            </div>
-                        @else
-                            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
-                                {{ strtoupper(substr($genre->name, 0, 1)) }}
-                            </div>
-                        @endif
-                        <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre->name }}</h3>
-                        <!-- Tahun muncul kalau dipilih -->
-                        <p x-show="selectedYear" class="text-gray-500 text-xs mt-1" x-text="'Year: ' + selectedYear"></p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
+            @foreach ($genres as $genre)
+                <button onclick="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}'"
+                        class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition">
+
+                    @if($genre->image)
+                        <img src="{{ asset('storage/' . $genre->image) }}"
+                             class="w-10 h-10 rounded-full mx-auto mb-2 object-cover">
+                    @endif
+
+                    {{ $genre->name }}
+                </button>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- ✅ NOW PLAYING -->
+    <div class="mt-24">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold">Now Playing</h2>
+            <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+            @foreach ($films as $film)
+                <div onclick="window.location.href='{{ route('films.show', $film) }}'"
+                     class="bg-slate-800/60 rounded-2xl overflow-hidden hover:scale-105 transition-transform shadow-lg cursor-pointer">
+
+                    <img src="{{ asset('storage/' . $film->poster) }}"
+                         class="w-full h-56 object-cover">
+
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg">{{ $film->judul }}</h3>
+                        <p class="text-sm text-gray-400">{{ $film->genre->name ?? 'Unknown' }} | {{ $film->tahun_rilis }}</p>
                     </div>
                 </div>
             @endforeach
         </div>
-    </section>
-
-  <!-- 🎥 Now Playing Section -->
-  <section x-data="{ showAll: false }" class="mt-14 px-8 md:px-16">
-    <div class="flex items-center justify-between">
-      <h2 class="text-2xl font-semibold text-gray-800">Now Playing</h2>
-      <button @click="showAll = !showAll" class="text-teal-700 font-medium hover:underline focus:outline-none">
-        <span x-text="showAll ? 'Show Less ←' : 'See All →'"></span>
-      </button>
     </div>
 
-    <div class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      @forelse ($films as $film)
-      <div class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 hover:scale-105 duration-300 p-2 cursor-pointer"
-           @click="window.location.href='{{ route('films.show', $film) }}'">
-        <img src="{{ asset('storage/' . $film->poster) }}"
-             alt="{{ $film->judul }}"
-             class="rounded-lg w-full h-72 object-cover">
-        <p class="mt-2 text-center font-semibold text-gray-800">{{ $film->judul }}</p>
-      </div>
-    @empty
-      <p class="col-span-full text-center text-gray-500">Belum ada film yang ditambahkan.</p>
-    @endforelse
-    </div>
-  </section>
-
-  {{-- Load Alpine.js --}}
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</section>
+</body>
 @endsection
