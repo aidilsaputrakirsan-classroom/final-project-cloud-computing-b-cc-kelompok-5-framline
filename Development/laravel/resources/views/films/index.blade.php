@@ -13,6 +13,11 @@
             <div class="bg-white rounded-lg shadow p-6 mb-6">
                 <form method="GET" action="{{ route('films.index') }}" class="flex flex-wrap gap-4 items-end">
                     <div class="flex-1 min-w-0">
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Cari Film</label>
+                        <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Masukkan judul film atau genre..." class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 px-3 py-2">
+                    </div>
+
+                    <div class="flex-1 min-w-0">
                         <label for="genre" class="block text-sm font-medium text-gray-700 mb-2">Genre</label>
                         <select name="genre" id="genre" class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                             <option value="">Semua Genre</option>

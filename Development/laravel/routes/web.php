@@ -21,7 +21,7 @@ Route::get('/', [LandingController::class, 'index'])->name('landing');
 // 🎬 Film routes (umum, bisa dilihat tanpa login)
 Route::get('/films', [FilmController::class, 'publicIndex'])->name('films.index');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
-Route::get('/search', [FilmController::class, 'index'])->name('films.search');
+Route::get('/search', [FilmController::class, 'publicIndex'])->name('films.search');
 
 /*
 |--------------------------------------------------------------------------

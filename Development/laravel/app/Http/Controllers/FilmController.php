@@ -9,10 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
-    // Menampilkan semua film untuk public (dengan filter genre)
+    // Menampilkan semua film untuk public (dengan filter genre, tahun, dan search)
     public function publicIndex(Request $request)
     {
         $query = Film::with('genre');
+
+        // Filter berdasarkan search query jika ada (judul film atau nama genre)
+        if ($request->has('search') && $request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('judul', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('genre', function($genreQuery) use ($request) {
+                      $genreQuery->where('name', 'like', '%' . $request->search . '%');
+                  });
+            });
+        }
 
         // Filter berdasarkan genre jika ada
         if ($request->has('genre') && $request->genre) {
