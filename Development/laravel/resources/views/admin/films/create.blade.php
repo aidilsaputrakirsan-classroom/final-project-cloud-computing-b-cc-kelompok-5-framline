@@ -42,18 +42,7 @@
       <input type="text" name="aktor" class="block w-full border rounded p-2" required>
     </div>
 
-    <div>
-      <label class="block mb-1 text-gray-800">Genre</label>
-<<<<<<< HEAD
-      <select name="genre_id"
-              class="block w-full border rounded p-2 text-black bg-white"
-              required>
-        <option value="">-- Pilih Genre --</option>
-        @foreach ($genres as $genre)
-          <option value="{{ $genre->id }}">{{ $genre->name }}</option>
-        @endforeach
-      </select>
-=======
+
       <div class="flex items-center space-x-2">
         <select name="genre_id"
                 id="genre-select"
@@ -70,14 +59,11 @@
            + Tambah Genre
         </button>
       </div>
->>>>>>> d168e3780e5f1f3c9b51910f8c992ac94aaa8773
     </div>
 
 
     <button class="bg-teal-600 text-dark px-4 py-2 rounded hover:bg-teal-700">Simpan</button>
   </form>
-<<<<<<< HEAD
-=======
 
   <!-- Modal Tambah Genre -->
   <div id="genre-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
@@ -108,7 +94,6 @@
       </div>
     </div>
   </div>
->>>>>>> d168e3780e5f1f3c9b51910f8c992ac94aaa8773
 </div>
 
 <script>
