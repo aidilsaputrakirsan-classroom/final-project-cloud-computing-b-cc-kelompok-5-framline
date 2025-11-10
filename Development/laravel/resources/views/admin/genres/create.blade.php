@@ -7,7 +7,7 @@
     <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
         <h1 class="text-3xl font-bold text-teal-700 mb-6 text-center">➕ Tambah Genre Baru</h1>
 
-        <form action="{{ route('admin.genres.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.genres.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div>
@@ -22,6 +22,31 @@
                 @error('name')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Genre</label>
+                <textarea id="description"
+                          name="description"
+                          rows="4"
+                          class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
+                          placeholder="Masukkan deskripsi genre (opsional)">{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Gambar Genre</label>
+                <input type="file"
+                       id="image"
+                       name="image"
+                       accept="image/*"
+                       class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition">
+                @error('image')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-sm text-gray-500">Format: JPG, PNG. Maksimal 2MB.</p>
             </div>
 
             <div class="flex space-x-4">

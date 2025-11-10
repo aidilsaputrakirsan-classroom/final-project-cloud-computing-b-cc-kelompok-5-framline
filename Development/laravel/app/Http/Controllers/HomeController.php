@@ -36,7 +36,9 @@ class HomeController extends Controller
             return view('admin.dashboard', compact('stats'));
         }
 
-        // Jika user biasa → tampilkan halaman home
-        return view('home');
+        // Jika user biasa → tampilkan halaman home dengan genre dan film
+        $genres = Genre::all();
+        $films = Film::select('id', 'judul', 'poster')->latest()->get();
+        return view('home', compact('genres', 'films'));
     }
 }

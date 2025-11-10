@@ -9,6 +9,52 @@ use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
+    // Menampilkan semua film untuk public (dengan filter genre)
+    public function publicIndex(Request $request)
+    {
+        $query = Film::with('genre');
+
+        // Filter berdasarkan genre jika ada
+        if ($request->has('genre') && $request->genre) {
+            $genre = Genre::where('name', 'like', '%' . $request->genre . '%')->first();
+            if ($genre) {
+                $query->where('genre_id', $genre->id);
+            }
+        }
+
+        // Filter berdasarkan tahun jika ada
+        if ($request->has('year') && $request->year) {
+            $query->where('tahun_rilis', $request->year);
+        }
+
+        $films = $query->latest()->paginate(12);
+        $genres = Genre::all();
+
+        return view('films.index', compact('films', 'genres'));
+    }
+
+    // Menampilkan detail film
+    public function show(Film $film)
+    {
+        return view('films.show', compact('film'));
+    }
+
+    // Toggle favorite film
+    public function toggleFavorite(Film $film)
+    {
+        $user = auth()->user();
+
+        if ($user->favoriteFilms()->where('film_id', $film->id)->exists()) {
+            $user->favoriteFilms()->detach($film->id);
+            $message = 'Film berhasil dihapus dari favorit!';
+        } else {
+            $user->favoriteFilms()->attach($film->id);
+            $message = 'Film berhasil ditambahkan ke favorit!';
+        }
+
+        return back()->with('success', $message);
+    }
+
     // Menampilkan semua film
     public function index()
     {

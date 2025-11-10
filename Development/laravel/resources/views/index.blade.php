@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('title', 'Cinema XXI - Feel the movies beyond')
 
@@ -48,16 +48,22 @@
 
         <!-- Grid Genre -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            @foreach (['Action', 'Drama', 'Comedy', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Animation', 'Fantasy', 'Mystery'] as $index => $genre)
+            @foreach ($genres as $index => $genre)
                 <div x-show="showAllGenre || {{ $index }} < 6"
                      x-transition
                      class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
-                     @click="window.location.href='{{ url('/films?genre=' . strtolower($genre)) }}' + (selectedYear ? '&year=' + selectedYear : '')">
+                     @click="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}' + (selectedYear ? '&year=' + selectedYear : '')">
                     <div class="p-4 text-center">
-                        <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
-                            {{ strtoupper(substr($genre, 0, 1)) }}
-                        </div>
-                        <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre }}</h3>
+                        @if($genre->image)
+                            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full overflow-hidden bg-gray-100">
+                                <img src="{{ asset('storage/' . $genre->image) }}" alt="{{ $genre->name }}" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
+                                {{ strtoupper(substr($genre->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre->name }}</h3>
                         <!-- Tahun muncul kalau dipilih -->
                         <p x-show="selectedYear" class="text-gray-500 text-xs mt-1" x-text="'Year: ' + selectedYear"></p>
                     </div>
@@ -77,7 +83,8 @@
 
     <div class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
       @forelse ($films as $film)
-      <div class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 hover:scale-105 duration-300 p-2">
+      <div class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 hover:scale-105 duration-300 p-2 cursor-pointer"
+           @click="window.location.href='{{ route('films.show', $film) }}'">
         <img src="{{ asset('storage/' . $film->poster) }}"
              alt="{{ $film->judul }}"
              class="rounded-lg w-full h-72 object-cover">

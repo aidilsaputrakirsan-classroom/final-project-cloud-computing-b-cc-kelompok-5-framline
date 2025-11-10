@@ -19,6 +19,7 @@ use App\Http\Controllers\LandingController;
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // 🎬 Film routes (umum, bisa dilihat tanpa login)
+Route::get('/films', [FilmController::class, 'publicIndex'])->name('films.index');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
 Route::get('/search', [FilmController::class, 'index'])->name('films.search');
 
@@ -47,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
     // Favorit & Riwayat tontonan
     Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
     Route::get('/profile/history', [ProfileController::class, 'history'])->name('profile.history');
+    Route::post('/films/{film}/favorite', [FilmController::class, 'toggleFavorite'])->name('films.favorite');
 });
 
 /*

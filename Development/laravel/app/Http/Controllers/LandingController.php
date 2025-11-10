@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Film;
+use App\Models\Genre;
 
 
 class LandingController extends Controller
@@ -15,7 +16,10 @@ class LandingController extends Controller
         // Ambil semua film dari database (hanya kolom penting)
         $films = Film::select('id', 'judul', 'poster')->latest()->get();
 
+        // Ambil semua genre untuk browse
+        $genres = Genre::all();
+
         // Kirim ke view index.blade.php
-        return view('index', compact('films'));
+        return view('index', compact('films', 'genres'));
     }
 }
