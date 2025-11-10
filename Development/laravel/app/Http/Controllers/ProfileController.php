@@ -21,6 +21,19 @@ class ProfileController extends Controller
         $user = Auth::user();
         return view('user.profile-edit', compact('user'));
     }
+    public function favorites()
+    {
+        $user = Auth::user();
+        $favorites = $user->favoriteFilms()->with('genre')->get();
+        return view('profile.favorites', compact('favorites'));
+    }
+
+    public function history()
+    {
+        $user = Auth::user();
+        $history = $user->watchedFilms()->with('genre')->orderByPivot('watched_at', 'desc')->get();
+        return view('profile.history', compact('history'));
+    }
 
     // update profil
     public function update(Request $request)

@@ -1,63 +1,172 @@
 @extends('layouts.app')
 
 @section('content')
-<h3 class="mb-4">Edit Film: {{ $film->title }}</h3>
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-6">✏️ Edit Film</h1>
 
-<form action="{{ route('admin.films.update', $film) }}" method="POST">
-  @csrf @method('PUT')
+  <form action="{{ route('admin.films.update', $film) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+    @csrf
+    @method('PUT')
 
-  <div class="mb-3">
-    <label class="form-label">Judul Film</label>
-    <input type="text" name="title" class="form-control" value="{{ old('title', $film->title) }}" required>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Deskripsi</label>
-    <textarea name="description" class="form-control" rows="4">{{ old('description', $film->description) }}</textarea>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Sutradara</label>
-    <input type="text" name="director" class="form-control" value="{{ old('director', $film->director) }}">
-  </div>
-
-  <div class="mb-3 row">
-    <div class="col-md-6">
-      <label class="form-label">Tanggal Rilis</label>
-      <input type="date" name="release_date" class="form-control" value="{{ old('release_date', $film->release_date) }}">
+    <div>
+      <label>Poster Film</label>
+      @if($film->poster)
+        <img src="{{ asset('storage/'.$film->poster) }}" class="w-24 h-32 mb-2">
+      @endif
+      <input type="file" name="poster" class="block w-full border rounded p-2">
     </div>
-    <div class="col-md-6">
-      <label class="form-label">Durasi (menit)</label>
-      <input type="number" name="duration" class="form-control" value="{{ old('duration', $film->duration) }}">
+
+    <div>
+      <label>Judul Film</label>
+      <input type="text" name="judul" value="{{ $film->judul }}" class="block w-full border rounded p-2" required>
     </div>
-  </div>
 
-  <div class="mb-3">
-    <label class="form-label">Poster URL</label>
-    <input type="url" name="poster_url" class="form-control" value="{{ old('poster_url', $film->poster_url) }}">
-  </div>
+    <div>
+      <label>Sinopsis</label>
+      <textarea name="sinopsis" rows="4" class="block w-full border rounded p-2" required>{{ $film->sinopsis }}</textarea>
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Trailer URL</label>
-    <input type="url" name="trailer_url" class="form-control" value="{{ old('trailer_url', $film->trailer_url) }}">
-  </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label>Tahun Rilis</label>
+        <input type="date" name="tahun_rilis" value="{{ $film->tahun_rilis }}" class="block w-full border rounded p-2" required>
+      </div>
+      <div>
+        <label>Durasi (menit)</label>
+        <input type="text" name="durasi" value="{{ $film->durasi }}" class="block w-full border rounded p-2" required>
+      </div>
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Genre</label>
-    <div class="row">
-      @foreach($genres as $genre)
-        <div class="col-md-3">
-          <label class="form-check-label">
-            <input type="checkbox" name="genres[]" value="{{ $genre->id }}" class="form-check-input"
-              {{ in_array($genre->id, $film->genres->pluck('id')->toArray()) ? 'checked' : '' }}>
+    <div>
+      <label>Sutradara</label>
+      <input type="text" name="sutradara" value="{{ $film->sutradara }}" class="block w-full border rounded p-2" required>
+    </div>
+
+    <div>
+      <label>Aktor</label>
+      <input type="text" name="aktor" value="{{ $film->aktor }}" class="block w-full border rounded p-2" required>
+    </div>
+
+    <div>
+<<<<<<< HEAD
+      <label>Genre</label>
+      <select name="genre_id" class="block w-full border rounded p-2" required>
+        @foreach ($genres as $genre)
+          <option value="{{ $genre->id }}" {{ $genre->id == $film->genre_id ? 'selected' : '' }}>
             {{ $genre->name }}
-          </label>
-        </div>
-      @endforeach
+          </option>
+        @endforeach
+      </select>
+=======
+      <label class="block mb-1 text-gray-800">Genre</label>
+      <div class="flex items-center space-x-2">
+        <select name="genre_id"
+                id="genre-select"
+                class="block w-full border rounded p-2 text-black bg-white"
+                required>
+          <option value="">-- Pilih Genre --</option>
+          @foreach ($genres as $genre)
+            <option value="{{ $genre->id }}" {{ $genre->id == $film->genre_id ? 'selected' : '' }}>
+              {{ $genre->name }}
+            </option>
+          @endforeach
+        </select>
+        <button type="button"
+                onclick="openGenreModal()"
+                class="bg-teal-600 text-white px-3 py-2 rounded hover:bg-teal-700 text-sm whitespace-nowrap">
+           + Tambah Genre
+        </button>
+      </div>
+>>>>>>> d168e3780e5f1f3c9b51910f8c992ac94aaa8773
+    </div>
+
+    <button class="bg-teal-600 text-dark px-4 py-2 rounded hover:bg-teal-700" type="submit" >Perbarui</button>
+  </form>
+
+  <!-- Modal Tambah Genre -->
+  <div id="genre-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div class="mt-3">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Genre Baru</h3>
+        <form id="genre-form" class="space-y-4">
+          @csrf
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nama Genre</label>
+            <input type="text"
+                   id="genre-name"
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                   required>
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button"
+                    onclick="closeGenreModal()"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+              Batal
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">
+              Simpan Genre
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
+</div>
 
-  <button class="btn btn-success">Update</button>
-  <a href="{{ route('admin.films.index') }}" class="btn btn-secondary">Kembali</a>
-</form>
+<script>
+function openGenreModal() {
+  document.getElementById('genre-modal').classList.remove('hidden');
+  document.getElementById('genre-name').focus();
+}
+
+function closeGenreModal() {
+  document.getElementById('genre-modal').classList.add('hidden');
+  document.getElementById('genre-name').value = '';
+}
+
+// Submit genre form via AJAX
+document.getElementById('genre-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const genreName = document.getElementById('genre-name').value;
+
+  fetch('{{ route("admin.genres.store") }}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({
+      name: genreName
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Add new genre to select dropdown
+      const select = document.getElementById('genre-select');
+      const option = document.createElement('option');
+      option.value = data.genre.id;
+      option.textContent = data.genre.name;
+      select.appendChild(option);
+
+      // Select the new genre
+      select.value = data.genre.id;
+
+      // Close modal
+      closeGenreModal();
+
+      // Show success message
+      alert('Genre berhasil ditambahkan!');
+    } else {
+      alert('Gagal menambahkan genre: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Terjadi kesalahan saat menambahkan genre');
+  });
+});
+</script>
 @endsection

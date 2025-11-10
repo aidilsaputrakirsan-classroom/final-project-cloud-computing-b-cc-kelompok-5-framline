@@ -5,8 +5,6 @@
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 px-6 py-10 text-gray-800 flex flex-col items-center">
 
-    <!-- Navbar atas -->
-
     <!-- Konten Tengah -->
     <div class="w-full max-w-2xl">
 
@@ -37,6 +35,7 @@
         <!-- Pengaturan -->
         <div class="space-y-6">
 
+            <!-- Bagian Pengaturan -->
             <div>
                 <h4 class="font-semibold text-gray-600 text-sm uppercase tracking-wider mb-3">Pengaturan</h4>
 
@@ -58,28 +57,27 @@
                 </ul>
             </div>
 
+            <!-- Bagian Aktivitas -->
             <div>
-                <h4 class="font-semibold text-gray-600 text-sm uppercase tracking-wider mb-3">Lainnya</h4>
+                <h4 class="font-semibold text-gray-600 text-sm uppercase tracking-wider mb-3">Aktivitas Saya</h4>
 
                 <ul class="space-y-2">
-                    <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <!-- Film Favorit -->
+                    <li onclick="window.location.href='{{ route('profile.favorites') }}'"
+                        class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <i class="bi bi-file-earmark-text text-gray-600 text-lg"></i>
-                            <span class="font-medium">Syarat Penggunaan</span>
+                            <i class="bi bi-heart-fill text-gray-600 text-lg"></i>
+                            <span class="font-medium">Daftar Film Favorit</span>
                         </div>
                         <i class="bi bi-chevron-right text-gray-400"></i>
                     </li>
-                    <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+
+                    <!-- History Pengguna -->
+                    <li onclick="window.location.href='{{ route('profile.history') }}'"
+                        class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <i class="bi bi-question-circle text-gray-600 text-lg"></i>
-                            <span class="font-medium">Pusat Bantuan</span>
-                        </div>
-                        <i class="bi bi-chevron-right text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-shield-check text-gray-600 text-lg"></i>
-                            <span class="font-medium">Kebijakan Privasi</span>
+                            <i class="bi bi-clock-history text-gray-600 text-lg"></i>
+                            <span class="font-medium">Riwayat Tontonan</span>
                         </div>
                         <i class="bi bi-chevron-right text-gray-400"></i>
                     </li>

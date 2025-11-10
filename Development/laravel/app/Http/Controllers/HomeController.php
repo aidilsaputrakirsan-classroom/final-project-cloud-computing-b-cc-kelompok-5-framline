@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Film;
+use App\Models\Genre;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -22,10 +25,20 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
+        // Jika admin → tampilkan dashboard admin dengan statistik
         if ($user->is_admin) {
-            return view('admin.dashboard'); // tampilan untuk admin
+            $stats = [
+                'total_films' => Film::count(),
+                'total_genres' => Genre::count(),
+                'total_users' => User::count(),
+            ];
+
+            return view('admin.dashboard', compact('stats'));
         }
 
-        return view('home'); // tampilan untuk user biasa
+        // Jika user biasa → tampilkan halaman home dengan genre dan film
+        $genres = Genre::all();
+        $films = Film::select('id', 'judul', 'poster')->latest()->get();
+        return view('home', compact('genres', 'films'));
     }
 }

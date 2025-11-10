@@ -1,73 +1,93 @@
 @extends('layouts.app')
 
-@section('title', 'Cinema XXI - Feel the movies beyond')
+@section('title', 'Film - Cinema XXI')
 
 @section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Film</h1>
 
-  <!-- Hero Section -->
-  <section class="text-center mt-10">
-    <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Feel the movies beyond</h1>
-    <div class="mt-6 flex justify-center">
-      <div class="relative w-80 md:w-1/2">
-        <input type="text" placeholder="Search movies or cinemas"
-               class="w-full px-6 py-3 rounded-full shadow text-gray-700 focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-5 h-5 absolute right-5 top-3.5 text-gray-400" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-        </svg>
-      </div>
-    </div>
-  </section>
+            <!-- Filter Section -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <form method="GET" action="{{ route('films.index') }}" class="flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-0">
+                        <label for="genre" class="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+                        <select name="genre" id="genre" class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Semua Genre</option>
+                            @foreach($genres as $g)
+                                <option value="{{ $g->name }}" {{ request('genre') == $g->name ? 'selected' : '' }}>{{ $g->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-  <!-- 🎬 Browse by Genre -->
-  <section x-data="{ showAllGenre: false }" class="mt-14 px-8 md:px-16">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-semibold text-gray-800">Browse by Genre</h2>
-      <button @click="showAllGenre = !showAllGenre"
-              class="text-teal-700 font-medium hover:underline focus:outline-none">
-        <span x-text="showAllGenre ? 'Show Less ←' : 'See All →'"></span>
-      </button>
-    </div>
+                    <div class="flex-1 min-w-0">
+                        <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
+                        <select name="year" id="year" class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option value="">Semua Tahun</option>
+                            @foreach (range(date('Y'), date('Y') - 20) as $y)
+                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-      @foreach (['Action', 'Drama', 'Comedy', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Animation', 'Fantasy', 'Mystery'] as $index => $genre)
-        <div x-show="showAllGenre || {{ $index }} < 6"
-             x-transition
-             class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
-          <div class="p-4 text-center">
-            <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
-              {{ strtoupper(substr($genre, 0, 1)) }}
+                    <div class="flex gap-2">
+                        <button type="submit" class="bg-blue-600 hover:bg-teal-700 text-dark px-6 py-2 rounded-lg">
+                            Cari
+                        </button>
+                        <a href="{{ route('films.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                            Reset
+                        </a>
+                    </div>
+                </form>
             </div>
-            <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre }}</h3>
-          </div>
         </div>
-      @endforeach
-    </div>
-  </section>
 
-  <!-- 🎥 Now Playing Section -->
-  <section x-data="{ showAll: false }" class="mt-14 px-8 md:px-16">
-    <div class="flex items-center justify-between">
-      <h2 class="text-2xl font-semibold text-gray-800">Now Playing</h2>
-      <button @click="showAll = !showAll" class="text-teal-700 font-medium hover:underline focus:outline-none">
-        <span x-text="showAll ? 'Show Less ←' : 'See All →'"></span>
-      </button>
-    </div>
+        <!-- Film Grid -->
+        @if($films->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                @foreach($films as $film)
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        <!-- Poster -->
+                        <div class="aspect-w-2 aspect-h-3">
+                            @if($film->poster)
+                                <img src="{{ asset('storage/' . $film->poster) }}" alt="{{ $film->judul }}" class="w-full h-64 object-cover">
+                            @else
+                                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                                    <i class="bi bi-film text-4xl text-gray-400"></i>
+                                </div>
+                            @endif
+                        </div>
 
-    <div class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      @foreach (range(1, 12) as $i)
-        <div x-show="showAll || {{ $i }} <= 5"
-             x-transition
-             class="bg-white rounded-xl shadow hover:shadow-lg transition p-2">
-          <img src="https://dummyimage.com/200x280/{{ ['ccc','aaa','999','777','555','444','333','222','111','000','888','666'][$i-1] }}/fff&text=Movie+{{ $i }}"
-               class="rounded-lg w-full h-auto">
-        </div>
-      @endforeach
-    </div>
-  </section>
+                        <!-- Film Info -->
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{{ $film->judul }}</h3>
+                            <p class="text-sm text-gray-600 mb-2">{{ $film->tahun_rilis }} • {{ $film->genre->name }}</p>
+                            <p class="text-sm text-gray-700 line-clamp-3 mb-4">{{ Str::limit($film->sinopsis, 100) }}</p>
 
-  {{-- Load Alpine.js --}}
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+                            <a href="{{ route('films.show', $film) }}" class="w-full bg-teal-600 hover:bg-teal-700 text-white text-center py-2 px-4 rounded-lg block transition-colors">
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-8">
+                {{ $films->appends(request()->query())->links() }}
+            </div>
+        @else
+            <div class="text-center py-12">
+                <i class="bi bi-film text-6xl text-gray-300 mb-4"></i>
+                <h2 class="text-xl font-semibold text-gray-600 mb-2">Tidak ada film ditemukan</h2>
+                <p class="text-gray-500 mb-6">Coba ubah filter atau kembali ke halaman utama.</p>
+                <a href="{{ route('landing') }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg">
+                    Kembali ke Beranda
+                </a>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection
