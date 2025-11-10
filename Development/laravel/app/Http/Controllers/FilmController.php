@@ -24,7 +24,7 @@ class FilmController extends Controller
 
         // Filter berdasarkan tahun jika ada
         if ($request->has('year') && $request->year) {
-            $query->where('tahun_rilis', $request->year);
+            $query->whereYear('tahun_rilis', $request->year);
         }
 
         $films = $query->latest()->paginate(12);
