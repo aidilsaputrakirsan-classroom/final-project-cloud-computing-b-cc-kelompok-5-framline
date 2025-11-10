@@ -10,38 +10,48 @@
       <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
   @endif
 
-  <table class="min-w-full bg-white shadow rounded-xl">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="py-2 px-4">Poster</th>
-        <th class="py-2 px-4">Judul</th>
-        <th class="py-2 px-4">Genre</th>
-        <th class="py-2 px-4">Tahun</th>
-        <th class="py-2 px-4">Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach ($films as $film)
-        <tr class="border-t">
-          <td class="py-2 px-4">
-            @if ($film->poster)
-              <img src="{{ asset('storage/'.$film->poster) }}" class="w-16 h-20 object-cover rounded">
-            @endif
-          </td>
-          <td class="py-2 px-4">{{ $film->judul }}</td>
-          <td class="py-2 px-4">{{ $film->genre->name ?? '-' }}</td>
-          <td class="py-2 px-4">{{ $film->tahun_rilis }}</td>
-          <td class="py-2 px-4 space-x-2">
-            <a href="{{ route('admin.films.edit', $film) }}" class="text-blue-600 hover:underline">Edit</a>
-            <form action="{{ route('admin.films.destroy', $film) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus film ini?')">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-            </form>
-          </td>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow rounded-xl">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="py-2 px-4">Poster</th>
+          <th class="py-2 px-4">Judul</th>
+          <th class="py-2 px-4">Sinopsis</th>
+          <th class="py-2 px-4">Tahun Rilis</th>
+          <th class="py-2 px-4">Sutradara</th>
+          <th class="py-2 px-4">Aktor</th>
+          <th class="py-2 px-4">Durasi</th>
+          <th class="py-2 px-4">Genre</th>
+          <th class="py-2 px-4">Aksi</th>
         </tr>
-      @endforeach
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @foreach ($films as $film)
+          <tr class="border-t">
+            <td class="py-2 px-4">
+              @if ($film->poster)
+                <img src="{{ asset('storage/'.$film->poster) }}" class="w-16 h-20 object-cover rounded">
+              @endif
+            </td>
+            <td class="py-2 px-4 font-semibold">{{ $film->judul }}</td>
+            <td class="py-2 px-4 text-sm text-gray-600 max-w-xs truncate" title="{{ $film->sinopsis }}">{{ Str::limit($film->sinopsis, 100) }}</td>
+            <td class="py-2 px-4">{{ $film->tahun_rilis }}</td>
+            <td class="py-2 px-4">{{ $film->sutradara }}</td>
+            <td class="py-2 px-4">{{ $film->aktor }}</td>
+            <td class="py-2 px-4">{{ $film->durasi }} menit</td>
+            <td class="py-2 px-4">{{ $film->genre->name ?? '-' }}</td>
+            <td class="py-2 px-4 space-x-2">
+              <a href="{{ route('admin.films.edit', $film) }}" class="text-blue-600 hover:underline">Edit</a>
+              <form action="{{ route('admin.films.destroy', $film) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus film ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-red-600 hover:underline">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
 </div>
 @endsection
