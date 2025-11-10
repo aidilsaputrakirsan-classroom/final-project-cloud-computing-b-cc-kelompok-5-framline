@@ -65,14 +65,11 @@ Route::middleware(['auth', 'is_admin'])
         Route::resource('/films', FilmController::class);
 
         // Kelola genre
-<<<<<<< HEAD
-        Route::resource('/genres', GenreController::class)->only(['index', 'store', 'destroy']);
-=======
         Route::resource('/genres', GenreController::class);
->>>>>>> d168e3780e5f1f3c9b51910f8c992ac94aaa8773
 
         // Kelola user
         Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
-        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.role');
+        Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
         Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
-    });
+});
