@@ -18,16 +18,44 @@ class GenreController extends Controller
         return view('admin.genres.index', compact('genres'));
     }
 
-    public function store(Request $r)
+    public function create()
     {
-        $r->validate(['name'=>'required|unique:genres,name']);
-        Genre::create($r->only('name'));
-        return back()->with('success','Genre ditambahkan');
+        return view('admin.genres.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate(['name'=>'required|unique:genres,name']);
+
+        $genre = Genre::create($request->only('name'));
+
+        // Jika request AJAX, return JSON response
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'genre' => $genre,
+                'message' => 'Genre berhasil ditambahkan'
+            ]);
+        }
+
+        return redirect()->route('admin.genres.index')->with('success','Genre ditambahkan');
+    }
+
+    public function edit(Genre $genre)
+    {
+        return view('admin.genres.edit', compact('genre'));
+    }
+
+    public function update(Request $request, Genre $genre)
+    {
+        $request->validate(['name'=>'required|unique:genres,name,'.$genre->id]);
+        $genre->update($request->only('name'));
+        return redirect()->route('admin.genres.index')->with('success','Genre diperbarui');
     }
 
     public function destroy(Genre $genre)
     {
         $genre->delete();
-        return back()->with('success','Genre dihapus');
+        return redirect()->route('admin.genres.index')->with('success','Genre dihapus');
     }
 }

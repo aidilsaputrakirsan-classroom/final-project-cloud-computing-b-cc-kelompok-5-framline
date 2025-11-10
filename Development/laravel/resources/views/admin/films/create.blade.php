@@ -1,78 +1,155 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-10">
-  <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-8 flex items-center gap-2">
-      🎬 <span>Tambah Film Baru</span>
-    </h1>
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-6">➕ Tambah Film Baru</h1>
 
-    <form action="{{ route('admin.films.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-      @csrf
+  <form action="{{ route('admin.films.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+    @csrf
+    <div>
+      <label>Poster Film</label>
+      <input type="file" name="poster" class="block w-full border rounded p-2">
+    </div>
 
-      <!-- Poster -->
+    <div>
+      <label>Judul Film</label>
+      <input type="text" name="judul" class="block w-full border rounded p-2" required>
+    </div>
+
+    <div>
+      <label>Sinopsis</label>
+      <textarea name="sinopsis" rows="4" class="block w-full border rounded p-2" required></textarea>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
       <div>
-        <label class="block text-gray-700 font-medium mb-2">Poster Film</label>
-        <input type="file" name="poster" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        <label>Tahun Rilis</label>
+        <input type="date" name="tahun_rilis" class="block w-full border rounded p-2" required>
       </div>
-
-      <!-- Judul -->
       <div>
-        <label class="block text-gray-700 font-medium mb-2">Judul Film</label>
-        <input type="text" name="judul" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="Masukkan judul film..." required>
+        <label>Durasi (menit)</label>
+        <input type="text" name="durasi" class="block w-full border rounded p-2" required>
       </div>
+    </div>
 
-      <!-- Sinopsis -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Sinopsis</label>
-        <textarea name="sinopsis" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none resize-none" placeholder="Tulis sinopsis singkat..." required></textarea>
-      </div>
+    <div>
+      <label>Sutradara</label>
+      <input type="text" name="sutradara" class="block w-full border rounded p-2" required>
+    </div>
 
-      <!-- Tahun & Durasi -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-gray-700 font-medium mb-2">Tahun Rilis</label>
-          <input type="number" name="tahun_rilis" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="Contoh: 2024" required>
-        </div>
-        <div>
-          <label class="block text-gray-700 font-medium mb-2">Durasi (menit)</label>
-          <input type="text" name="durasi" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="Contoh: 120 menit" required>
-        </div>
-      </div>
+    <div>
+      <label>Aktor</label>
+      <input type="text" name="aktor" class="block w-full border rounded p-2" required>
+    </div>
 
-      <!-- Sutradara -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Sutradara</label>
-        <input type="text" name="sutradara" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="Nama sutradara..." required>
-      </div>
-
-      <!-- Aktor -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Aktor</label>
-        <input type="text" name="aktor" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="Daftar aktor utama..." required>
-      </div>
-
-      <!-- Genre -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Genre</label>
-        <select name="genre_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" required>
+    <div>
+      <label class="block mb-1 text-gray-800">Genre</label>
+      <div class="flex items-center space-x-2">
+        <select name="genre_id"
+                id="genre-select"
+                class="block w-full border rounded p-2 text-black bg-white"
+                required>
           <option value="">-- Pilih Genre --</option>
           @foreach ($genres as $genre)
-            <option value="{{ $genre->id }}">{{ $genre->nama }}</option>
+            <option value="{{ $genre->id }}">{{ $genre->name }}</option>
           @endforeach
         </select>
-      </div>
-
-      <!-- Tombol Aksi -->
-      <div class="flex justify-end gap-3 pt-4">
-        <a href="{{ route('admin.films.index') }}" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-          Batal
-        </a>
-        <button type="submit" class="px-6 py-2 bg-teal-600 text-black rounded-lg font-medium hover:bg-teal-700 transition">
-          Simpan Film
+        <button type="button"
+                onclick="openGenreModal()"
+                class="bg-teal-600 text-white px-3 py-2 rounded hover:bg-teal-700 text-sm whitespace-nowrap">
+           + Tambah Genre
         </button>
       </div>
-    </form>
+    </div>
+
+
+    <button class="bg-teal-600 text-dark px-4 py-2 rounded hover:bg-teal-700">Simpan</button>
+  </form>
+
+  <!-- Modal Tambah Genre -->
+  <div id="genre-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div class="mt-3">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Genre Baru</h3>
+        <form id="genre-form" class="space-y-4">
+          @csrf
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Nama Genre</label>
+            <input type="text"
+                   id="genre-name"
+                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                   required>
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button"
+                    onclick="closeGenreModal()"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+              Batal
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">
+              Simpan Genre
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+function openGenreModal() {
+  document.getElementById('genre-modal').classList.remove('hidden');
+  document.getElementById('genre-name').focus();
+}
+
+function closeGenreModal() {
+  document.getElementById('genre-modal').classList.add('hidden');
+  document.getElementById('genre-name').value = '';
+}
+
+// Submit genre form via AJAX
+document.getElementById('genre-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const genreName = document.getElementById('genre-name').value;
+
+  fetch('{{ route("admin.genres.store") }}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({
+      name: genreName
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Add new genre to select dropdown
+      const select = document.getElementById('genre-select');
+      const option = document.createElement('option');
+      option.value = data.genre.id;
+      option.textContent = data.genre.name;
+      select.appendChild(option);
+
+      // Select the new genre
+      select.value = data.genre.id;
+
+      // Close modal
+      closeGenreModal();
+
+      // Show success message
+      alert('Genre berhasil ditambahkan!');
+    } else {
+      alert('Gagal menambahkan genre: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Terjadi kesalahan saat menambahkan genre');
+  });
+});
+</script>
 @endsection
