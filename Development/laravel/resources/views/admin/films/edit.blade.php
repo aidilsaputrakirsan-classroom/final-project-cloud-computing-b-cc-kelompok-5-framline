@@ -29,7 +29,7 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label>Tahun Rilis</label>
-        <input type="number" name="tahun_rilis" value="{{ $film->tahun_rilis }}" class="block w-full border rounded p-2" required>
+        <input type="date" name="tahun_rilis" value="{{ $film->tahun_rilis }}" class="block w-full border rounded p-2" required>
       </div>
       <div>
         <label>Durasi (menit)</label>
@@ -52,13 +52,13 @@
       <select name="genre_id" class="block w-full border rounded p-2" required>
         @foreach ($genres as $genre)
           <option value="{{ $genre->id }}" {{ $genre->id == $film->genre_id ? 'selected' : '' }}>
-            {{ $genre->nama }}
+            {{ $genre->name }}
           </option>
         @endforeach
       </select>
     </div>
 
-    <button class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Perbarui</button>
+    <button class="bg-teal-600 text-dark px-4 py-2 rounded hover:bg-teal-700" type="submit" >Perbarui</button>
   </form>
 </div>
 @endsection
