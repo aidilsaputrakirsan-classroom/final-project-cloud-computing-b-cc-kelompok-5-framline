@@ -9,77 +9,109 @@ use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
-    // Menampilkan semua film untuk public (dengan filter genre, tahun, dan search)
+    /**
+     * PUBLIC INDEX
+     * Halaman depan cinema (Netflix-style)
+     * Mendukung search, filter genre, filter tahun.
+     */
     public function publicIndex(Request $request)
     {
         $query = Film::with('genre');
 
-        // Filter berdasarkan search query jika ada (judul film atau nama genre)
-        if ($request->has('search') && $request->search) {
-            $query->where(function($q) use ($request) {
+        // Search judul & nama genre
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
                 $q->where('judul', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('genre', function($genreQuery) use ($request) {
+                  ->orWhereHas('genre', function ($genreQuery) use ($request) {
                       $genreQuery->where('name', 'like', '%' . $request->search . '%');
                   });
             });
         }
 
-        // Filter berdasarkan genre jika ada
-        if ($request->has('genre') && $request->genre) {
+        // Filter genre
+        if ($request->filled('genre')) {
             $genre = Genre::where('name', 'like', '%' . $request->genre . '%')->first();
             if ($genre) {
                 $query->where('genre_id', $genre->id);
             }
         }
 
-        // Filter berdasarkan tahun jika ada
-        if ($request->has('year') && $request->year) {
+        // Filter tahun
+        if ($request->filled('year')) {
             $query->whereYear('tahun_rilis', $request->year);
         }
 
-        $films = $query->latest()->paginate(12);
+        $films = $query->latest()->paginate(18);
         $genres = Genre::all();
 
         return view('films.index', compact('films', 'genres'));
     }
 
-    // Menampilkan detail film
+    /**
+     * DETAIL FILM
+     */
     public function show(Film $film)
     {
         return view('films.show', compact('film'));
     }
 
-    // Toggle favorite film
-    public function toggleFavorite(Film $film)
+    /**
+     * TOGGLE FAVORITE
+     * Versi yang mendukung POP-UP LOGIN + AJAX
+     */
+    public function toggleFavorite(Request $request, Film $film)
     {
-        $user = auth()->user();
-
-        if ($user->favoriteFilms()->where('film_id', $film->id)->exists()) {
-            $user->favoriteFilms()->detach($film->id);
-            $message = 'Film berhasil dihapus dari favorit!';
-        } else {
-            $user->favoriteFilms()->attach($film->id);
-            $message = 'Film berhasil ditambahkan ke favorit!';
+        // Jika user belum login → kirim response AJAX
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'requires_login' => true,
+                'message' => 'Anda harus login untuk menambahkan film ke favorit.'
+            ], 401);
         }
 
-        return back()->with('success', $message);
+        $user = auth()->user();
+
+        $alreadyFavorited = $user->favoriteFilms()->where('film_id', $film->id)->exists();
+
+        if ($alreadyFavorited) {
+            $user->favoriteFilms()->detach($film->id);
+            return response()->json([
+                'success' => true,
+                'favorited' => false,
+                'message' => 'Film dihapus dari favorit!'
+            ]);
+        }
+
+        $user->favoriteFilms()->attach($film->id);
+        return response()->json([
+            'success' => true,
+            'favorited' => true,
+            'message' => 'Film ditambahkan ke favorit!'
+        ]);
     }
 
-    // Menampilkan semua film
+    /**
+     * ADMIN — INDEX
+     */
     public function index()
     {
         $films = Film::with('genre')->latest()->paginate(10);
         return view('admin.films.index', compact('films'));
     }
 
-    // Form tambah film
+    /**
+     * ADMIN — CREATE
+     */
     public function create()
     {
         $genres = Genre::all();
         return view('admin.films.create', compact('genres'));
     }
 
-    // Simpan film baru
+    /**
+     * ADMIN — STORE
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -111,14 +143,18 @@ class FilmController extends Controller
         return redirect()->route('admin.films.index')->with('success', 'Film berhasil ditambahkan!');
     }
 
-    // Form edit film
+    /**
+     * ADMIN — EDIT
+     */
     public function edit(Film $film)
     {
         $genres = Genre::all();
         return view('admin.films.edit', compact('film', 'genres'));
     }
 
-    // Update film
+    /**
+     * ADMIN — UPDATE
+     */
     public function update(Request $request, Film $film)
     {
         $request->validate([
@@ -132,22 +168,33 @@ class FilmController extends Controller
             'genre_id' => 'required|exists:genres,id',
         ]);
 
+        // Update poster jika ada file baru
         if ($request->hasFile('poster')) {
-            if ($film->poster) Storage::disk('public')->delete($film->poster);
+            if ($film->poster) {
+                Storage::disk('public')->delete($film->poster);
+            }
             $film->poster = $request->file('poster')->store('posters', 'public');
         }
 
-        $film->update($request->only(['judul', 'sinopsis', 'tahun_rilis', 'sutradara', 'aktor', 'durasi', 'genre_id']));
-        $film->save();
+        $film->update($request->only([
+            'judul', 'sinopsis', 'tahun_rilis', 'sutradara',
+            'aktor', 'durasi', 'genre_id'
+        ]));
 
         return redirect()->route('admin.films.index')->with('success', 'Film berhasil diperbarui!');
     }
 
-    // Hapus film
+    /**
+     * ADMIN — DELETE
+     */
     public function destroy(Film $film)
     {
-        if ($film->poster) Storage::disk('public')->delete($film->poster);
+        if ($film->poster) {
+            Storage::disk('public')->delete($film->poster);
+        }
+
         $film->delete();
+
         return redirect()->route('admin.films.index')->with('success', 'Film berhasil dihapus!');
     }
 }

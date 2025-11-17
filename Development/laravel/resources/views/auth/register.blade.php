@@ -1,162 +1,162 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Akun')
+@section('title', 'Register - SI XXI')
 
 @push('styles')
+<!-- Font & Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
     body {
-        margin: 0;
-        padding: 0;
-        background: #000; /* FULL cinema black */
-        font-family: 'Inter', sans-serif;
+        background: #000000;
         color: #fff;
+        font-family: 'Poppins', sans-serif;
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 60px;
+        overflow-x: hidden;
     }
 
-    /* --- HEADER --- */
-    .register-header {
-        width: 100%;
-        max-width: 420px;
-        text-align: left;
-        margin-bottom: 30px;
+    .register-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        text-align: center;
+        animation: fadeIn 0.8s ease-in-out;
     }
 
     .register-logo {
         font-size: 2rem;
-        font-weight: 800;
-        color: #e50914; /* Netflix Red */
-        letter-spacing: 1px;
-        margin-bottom: 10px;
+        font-weight: 700;
+        color: #e50914;
+        margin-bottom: 0.5rem;
     }
 
     .register-title {
-        font-size: 1.45rem;
+        font-size: 1.4rem;
         font-weight: 600;
-        margin-top: 8px;
-        color: #f5f5f5;
+        color: #ffffff;
+        margin-bottom: 30px;
     }
 
-    /* --- CONTAINER BOX --- */
     .register-box {
         width: 100%;
         max-width: 420px;
-        background: rgba(20, 20, 20, 0.9);
-        border-radius: 12px;
+        background: #0a0a0a;
+        border-radius: 14px;
         padding: 40px 35px;
-        box-shadow: 0 0 35px rgba(0,0,0,0.6);
-        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 0 25px rgba(0,0,0,0.9);
+        text-align: left;
     }
 
-    /* --- INPUT --- */
     .form-control {
         width: 100%;
-        height: 48px;
-        border-radius: 6px;
-        background: #333;
-        border: 1px solid #444;
+        height: 50px;
+        border: 1px solid #222;
+        border-radius: 8px;
+        background: #000;
         color: #fff;
         font-size: 1rem;
-        padding: 12px 15px;
-        margin-bottom: 18px;
-        transition: all 0.25s ease;
+        padding: 14px 15px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
     }
 
     .form-control:focus {
         outline: none;
         border-color: #e50914;
-        background: #222;
-        box-shadow: 0 0 8px rgba(229, 9, 20, 0.5);
+        box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.3);
     }
 
-    /* --- BUTTON --- */
     .btn-register {
         background: #e50914;
-        color: #fff;
+        color: white;
         border: none;
         height: 50px;
+        border-radius: 8px;
         width: 100%;
-        border-radius: 6px;
         font-weight: 600;
-        font-size: 1.05rem;
-        cursor: pointer;
-        letter-spacing: .5px;
-        transition: background 0.25s ease;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
     }
 
     .btn-register:hover {
-        background: #b20710;
+        background: #f6121d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(229, 9, 20, 0.4);
     }
 
-    /* --- FOOTER --- */
-    .login-footer {
+    .register-footer {
+        margin-top: 25px;
+        color: #ccc;
         text-align: center;
-        margin-top: 20px;
-        font-size: .95rem;
-        color: #bbb;
+        font-size: 0.95rem;
     }
 
-    .login-footer a {
+    .register-footer a {
         color: #e50914;
         font-weight: 600;
         text-decoration: none;
     }
 
-    .login-footer a:hover {
-        text-decoration: underline;
+    .register-footer a:hover {
+        color: #ff4b4b;
     }
 
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 @endpush
 
 @section('content')
-<div>
+<div class="register-container">
 
-    <div class="register-header">
-        <div class="register-logo">CINEMA XXI</div>
-        <div class="register-title">Buat akun m.tix kamu</div>
-    </div>
+    <div class="register-logo">🎬 SI XXI</div>
+    <div class="register-title">Buat Akun Baru</div>
 
     <div class="register-box">
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            <input id="name" type="text" name="name" value="{{ old('name') }}"
+            <label for="name" class="block mb-2 text-sm text-gray-300">Nama Lengkap</label>
+            <input id="name" type="text"
                 class="form-control @error('name') is-invalid @enderror"
-                placeholder="Nama Lengkap" required autofocus>
-
+                name="name" value="{{ old('name') }}" required autofocus>
             @error('name')
-                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+            <span class="text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
-            <input id="email" type="email" name="email" value="{{ old('email') }}"
+            <label for="email" class="block mb-2 text-sm text-gray-300">Email</label>
+            <input id="email" type="email"
                 class="form-control @error('email') is-invalid @enderror"
-                placeholder="Email" required>
-
+                name="email" value="{{ old('email') }}" required>
             @error('email')
-                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+            <span class="text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
-            <input id="password" type="password" name="password"
+            <label for="password" class="block mb-2 text-sm text-gray-300">Password</label>
+            <input id="password" type="password"
                 class="form-control @error('password') is-invalid @enderror"
-                placeholder="Kata Sandi" required>
-
+                name="password" required>
             @error('password')
-                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+            <span class="text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
-            <input id="password-confirm" type="password" name="password_confirmation"
-                class="form-control" placeholder="Konfirmasi Kata Sandi" required>
+            <label for="password-confirm" class="block mb-2 text-sm text-gray-300">Konfirmasi Password</label>
+            <input id="password-confirm" type="password"
+                class="form-control"
+                name="password_confirmation" required>
 
-            <button type="submit" class="btn-register">Daftar</button>
+            <button type="submit" class="btn-register mt-2">Daftar</button>
         </form>
+    </div>
 
-        <div class="login-footer">
-            Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
-        </div>
+    <div class="register-footer">
+        Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
     </div>
 
 </div>

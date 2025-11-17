@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Login - Cinema XXI')
+@section('title', 'Login - SI XXI')
 
 @push('styles')
-<!-- ✅ Font dan Tailwind CDN untuk tampilan modern -->
+<!-- Font & Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
     body {
-        background: radial-gradient(circle at top, #141414 0%, #000 100%);
+        background: #000000; /* FULL BLACK */
         color: #fff;
         font-family: 'Poppins', sans-serif;
         min-height: 100vh;
@@ -36,27 +36,27 @@
     .login-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: #f5f5f5;
+        color: #ffffff;
         margin-bottom: 30px;
     }
 
     .login-box {
         width: 100%;
         max-width: 420px;
-        background: rgba(25, 25, 25, 0.9);
+        background: #0a0a0a; /* PURE DARK */
         border-radius: 14px;
         padding: 40px 35px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 0 25px rgba(0,0,0,0.9);
         text-align: left;
     }
 
     .form-control {
         width: 100%;
         height: 50px;
-        border: 1px solid #333;
+        border: 1px solid #222;
         border-radius: 8px;
-        background: #0f0f0f;
+        background: #000; /* Full black input */
         color: #fff;
         font-size: 1rem;
         padding: 14px 15px;
@@ -85,17 +85,17 @@
     .btn-login:hover {
         background: #f6121d;
         transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(229, 9, 20, 0.3);
+        box-shadow: 0 8px 15px rgba(229, 9, 20, 0.4);
     }
 
     .forgot-pin {
         display: block;
         text-align: center;
         margin-top: 10px;
-        color: #aaa;
+        color: #bbb;
         font-weight: 500;
         text-decoration: none;
-        transition: color 0.2s ease;
+        transition: 0.2s;
     }
 
     .forgot-pin:hover {
@@ -113,7 +113,7 @@
         color: #e50914;
         font-weight: 600;
         text-decoration: none;
-        transition: color 0.2s ease;
+        transition: 0.2s;
     }
 
     .login-footer a:hover {
@@ -121,39 +121,33 @@
     }
 
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="login-container">
-    <div class="login-logo">🎬 Cinema XXI</div>
+    <div class="login-logo">🎬 SI XXI</div>
     <div class="login-title">Welcome Back</div>
 
     <div class="login-box">
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <label for="email" class="block mb-2 text-sm text-gray-300">Nomor Telepon / Email</label>
+            <label for="email" class="block mb-2 text-sm text-gray-300">Email</label>
             <input id="email" type="text"
-                   class="form-control @error('email') is-invalid @enderror"
-                   name="email" value="{{ old('email') }}" required autofocus>
+                class="form-control @error('email') is-invalid @enderror"
+                name="email" value="{{ old('email') }}" required autofocus>
             @error('email')
             <span class="text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
-            <label for="password" class="block mb-2 text-sm text-gray-300">Masukkan PIN / Password</label>
+            <label for="password" class="block mb-2 text-sm text-gray-300">Masukkan Password</label>
             <input id="password" type="password"
-                   class="form-control @error('password') is-invalid @enderror"
-                   name="password" required>
+                class="form-control @error('password') is-invalid @enderror"
+                name="password" required>
             @error('password')
             <span class="text-red-400 text-sm">{{ $message }}</span>
             @enderror
