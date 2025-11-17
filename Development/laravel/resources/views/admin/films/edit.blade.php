@@ -69,6 +69,14 @@
                class="block w-full border border-red-800/60 rounded-lg bg-[#f5f5f5] text-black p-3 selection:bg-red-600 selection:text-black focus:bg-black focus:text-white focus:ring-2 focus:ring-red-600 focus:border-red-700 transition-all duration-300" required>
       </div>
 
+      {{-- Trailer URL (YouTube) --}}
+      <div>
+        <label class="block text-gray-200 font-semibold mb-2">Trailer URL (YouTube)</label>
+        <input type="text" name="trailer_url" value="{{ old('trailer_url', $film->trailer_url) }}"
+               placeholder="https://www.youtube.com/watch?v=xxxxxxxx"
+               class="block w-full border border-red-800/60 rounded-lg bg-[#f5f5f5] text-black p-3 selection:bg-red-600 selection:text-black focus:bg-black focus:text-white focus:ring-2 focus:ring-red-600 focus:border-red-700 transition-all duration-300">
+      </div>
+
       {{-- Genre --}}
       <div>
         <label class="block text-gray-200 font-semibold mb-2">Genre</label>

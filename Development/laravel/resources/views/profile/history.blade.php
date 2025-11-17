@@ -16,6 +16,7 @@
                 <div class="bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-red-500/20 transition-all overflow-hidden border border-white/5 backdrop-blur">
 
                     <div class="md:flex">
+
                         <!-- Poster -->
                         <div class="md:w-1/4 relative">
                             @if($film->poster)
@@ -32,6 +33,7 @@
                         <div class="md:w-3/4 p-5">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
+
                                     <h3 class="font-bold text-xl mb-1 text-white tracking-tight">
                                         {{ $film->judul }}
                                     </h3>
@@ -45,14 +47,16 @@
                                     </p>
                                 </div>
 
+                                <!-- Tanggal Ditonton -->
                                 <div class="text-right ml-4">
                                     <p class="text-xs text-gray-500">Ditonton</p>
                                     <p class="font-medium text-sm text-gray-300">
-                                        {{ $film->pivot->watched_at->format('d M Y, H:i') }}
+                                        {{ \Carbon\Carbon::parse($film->pivot->watched_at)->format('d M Y, H:i') }}
                                     </p>
                                 </div>
                             </div>
 
+                            <!-- Button -->
                             <div class="mt-4 flex justify-between items-center">
                                 <a href="{{ route('films.show', $film) }}"
                                    class="text-red-500 hover:text-red-400 text-sm font-semibold transition">
@@ -79,11 +83,13 @@
                                     </button>
                                 </form>
                             </div>
+
                         </div>
                     </div>
 
                 </div>
             @endforeach
+
         </div>
 
     @else

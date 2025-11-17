@@ -4,7 +4,6 @@
 
 @push('styles')
 <style>
-    /* MODAL DARK MODE */
     dialog#loginModal {
         background: #0d0d0d !important;
         color: #fff !important;
@@ -16,8 +15,12 @@
     }
 
     dialog#loginModal::backdrop {
-        background: rgba(0, 0, 0, 0.75);
+        background: rgba(0,0,0,0.75);
         backdrop-filter: blur(2px);
+    }
+
+    .btn-click {
+        transform: scale(0.95);
     }
 </style>
 @endpush
@@ -27,7 +30,7 @@
 
     <div class="max-w-5xl mx-auto">
 
-        <!-- Header Card -->
+        <!-- FILM HEADER -->
         <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl mb-10">
 
             <div class="md:flex">
@@ -37,7 +40,7 @@
                     @if($film->poster)
                         <img 
                             src="{{ asset('storage/' . $film->poster) }}" 
-                            class="w-full h-[450px] object-cover brightness-90 hover:brightness-100 transition-all duration-300 md:rounded-l-2xl"
+                            class="w-full h-[450px] object-cover brightness-90 hover:brightness-100 transition-all duration-300"
                         >
                     @else
                         <div class="w-full h-96 bg-gray-800 flex items-center justify-center">
@@ -51,7 +54,7 @@
 
                     <h1 class="text-4xl font-extrabold tracking-wide mb-6">{{ $film->judul }}</h1>
 
-                    <!-- Metadata Grid -->
+                    <!-- Metadata -->
                     <div class="grid grid-cols-2 gap-6 mb-8 text-sm">
 
                         <div>
@@ -77,31 +80,28 @@
                     </div>
 
                     <!-- FAVORITE BUTTON -->
-                    @auth
-                        <div class="flex gap-4 mt-4">
-                            <form action="{{ route('films.favorite', $film) }}" method="POST">
-                                @csrf
-                                <button 
-                                    type="submit"
-                                    class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white font-semibold text-sm flex items-center gap-2 transition"
-                                >
-                                    <i class="bi bi-heart{{ auth()->user()->favoriteFilms()->where('film_id', $film->id)->exists() ? '-fill' : '' }}"></i>
-                                    {{ auth()->user()->favoriteFilms()->where('film_id', $film->id)->exists() ? 'Hapus dari Favorit' : 'Tambah ke Favorit' }}
-                                </button>
-                            </form>
-                        </div>
+                    <div class="mt-4">
 
-                    @else
-                        <!-- If NOT logged in -->
-                        <div class="mt-4">
-                            <button 
-                                onclick="document.getElementById('loginModal').showModal()"
-                                class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white font-semibold text-sm flex items-center gap-2 transition"
-                            >
-                                <i class="bi bi-heart"></i> Tambah ke Favorit
-                            </button>
-                        </div>
-                    @endauth
+                        <button 
+                            id="favoriteBtn"
+                            data-film-id="{{ $film->id }}"
+                            data-auth="{{ auth()->check() ? '1' : '0' }}"
+                            class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white font-semibold text-sm flex items-center gap-2 transition"
+                        >
+                            <i id="favoriteIcon" 
+                               class="bi {{ auth()->check() && auth()->user()->favoriteFilms()->where('film_id', $film->id)->exists() ? 'bi-heart-fill' : 'bi-heart' }}">
+                            </i>
+
+                            <span id="favoriteText">
+                                @auth
+                                    {{ auth()->user()->favoriteFilms()->where('film_id', $film->id)->exists() ? 'Hapus dari Favorit' : 'Tambah ke Favorit' }}
+                                @else
+                                    Tambah ke Favorit
+                                @endauth
+                            </span>
+                        </button>
+
+                    </div>
 
                 </div>
             </div>
@@ -123,8 +123,25 @@
         </div>
         @endif
 
-        <!-- Back Button -->
-        <div class="text-center mt-10">
+        <!-- TRAILER -->
+        @if($film->trailer_url)
+        <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl p-8 shadow-lg mb-10">
+            <h2 class="text-2xl font-bold mb-4">Trailer</h2>
+
+            <div class="aspect-video w-full rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                <iframe 
+                    src="{{ $film->trailer_url }}" 
+                    class="w-full h-full"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+        @endif
+
+        <!-- BUTTON KEMBALI -->
+        <div class="text-center mt-10 mb-10">
             <a 
                 href="{{ url()->previous() }}" 
                 class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 font-semibold transition"
@@ -137,11 +154,9 @@
     </div>
 </div>
 
-<!-- MODAL LOGIN REQUIRED -->
+<!-- MODAL LOGIN -->
 <dialog id="loginModal" class="rounded-xl">
-
     <form method="dialog" class="p-6 text-white">
-
         <h2 class="text-xl font-bold mb-4">Login Diperlukan</h2>
 
         <p class="text-gray-300 mb-6">
@@ -152,9 +167,55 @@
             <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Tutup</button>
             <a href="{{ route('login') }}" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg">Login</a>
         </div>
-
     </form>
-
 </dialog>
 
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('favoriteBtn').addEventListener('click', async function () {
+
+    const isAuth = this.dataset.auth;
+
+    // Jika user BELUM login → tampilkan modal
+    if (isAuth === "0") {
+        document.getElementById('loginModal').showModal();
+        return;
+    }
+
+    // Jika sudah login → jalankan AJAX toggle favorite
+    const btn = this;
+    const icon = document.getElementById('favoriteIcon');
+    const text = document.getElementById('favoriteText');
+    const filmId = btn.dataset.filmId;
+
+    btn.classList.add("btn-click");
+    setTimeout(() => btn.classList.remove("btn-click"), 150);
+
+    const csrf = '{{ csrf_token() }}';
+
+    const res = await fetch(`/films/${filmId}/favorite`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+        }
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        if (data.favorited) {
+            icon.classList.remove('bi-heart');
+            icon.classList.add('bi-heart-fill');
+            text.innerText = 'Hapus dari Favorit';
+        } else {
+            icon.classList.remove('bi-heart-fill');
+            icon.classList.add('bi-heart');
+            text.innerText = 'Tambah ke Favorit';
+        }
+    }
+});
+</script>
+@endpush
