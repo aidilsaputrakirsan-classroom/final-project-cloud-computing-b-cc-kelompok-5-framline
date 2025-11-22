@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +14,17 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* Update: Background untuk Light Mode, Dark Mode diatur via class */
             background: linear-gradient(to bottom right, #e8f6ff, #ffffff);
             min-height: 100vh;
+            /* Transition untuk perubahan warna background Dark Mode */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Styling untuk Dark Mode */
+        .dark body {
+            background: #111827; /* Darker background */
+            color: #d1d5db; /* Light text color */
         }
 
         .nav-btn {
@@ -43,6 +52,15 @@
             background-color: #0f766e;
             color: white;
         }
+
+        /* Penyesuaian Dark Mode untuk Header dan Dropdown */
+        .dark .header-transition {
+            background-color: #1f2937;
+            border-color: #374151;
+        }
+        .dark .backdrop-blur-md {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
     </style>
 
     @stack('styles')
@@ -55,7 +73,7 @@
         x-data="{ scrolled: false }"
         x-init="window.addEventListener('scroll', () => scrolled = window.scrollY > 10)"
         :class="scrolled ? 'backdrop-blur-md bg-white/90 shadow-sm' : 'bg-white'"
-        class="fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-gray-100"
+        class="fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-700 header-transition"
     >
         <div class="flex items-center justify-between px-6 md:px-12 py-4">
             {{-- Logo dan Lokasi --}}
@@ -63,7 +81,7 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Cinema_XXI_logo.svg"
                     alt="Cinema XXI" class="h-6">
 
-                <button class="flex items-center text-gray-700 font-medium border border-gray-200 px-3 py-1 rounded-full hover:bg-gray-100">
+                <button class="flex items-center text-light font-medium border border-gray-200 px-3 py-1 rounded-full hover:bg-gray-100 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,31 +94,31 @@
             {{-- Menu kanan (Profil / Login / Register) --}}
             <div class="flex items-center space-x-6 text-sm font-medium">
                 @auth
-                    <span class="text-gray-700 hidden sm:block">
+                    <span class="text-light hidden sm:block">
                         Hi, {{ Auth::user()->name }}
                     </span>
 
                     {{-- Dropdown Profile --}}
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open"
-                            class="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center font-semibold text-gray-800 hover:ring-2 hover:ring-teal-500 transition">
+                            class="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center font-semibold text-gray-800 hover:ring-2 hover:ring-teal-500 transition dark:bg-gray-600 dark:text-white">
                             {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
                         </button>
 
                         <div x-show="open" @click.away="open = false" x-transition
-                            class="absolute right-0 mt-3 w-60 bg-white/90 backdrop-blur-md border border-gray-100 rounded-xl shadow-lg z-50">
-                            <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="font-semibold">{{ Auth::user()->name }}</p>
-                                <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                            class="absolute right-0 mt-3 w-60 bg-white/90 backdrop-blur-md border border-gray-100 rounded-xl shadow-lg z-50 dark:bg-gray-800/90 dark:border-gray-700">
+                            <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                <p class="font-semibold dark:text-white">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
                             </div>
                             <div class="py-1">
-                                <a href="{{ route('profile.show') }}" class="block px-4 py-2 hover:bg-gray-100">
+                                <a href="{{ route('profile.show') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200">
                                     My m.tix
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"
-                                        class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+                                        class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 dark:hover:bg-gray-700 dark:text-red-500">
                                         Log out
                                     </button>
                                 </form>
@@ -129,5 +147,83 @@
     {{-- Script tambahan --}}
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    {{-- ✅ Tombol Dark Mode (Dipindahkan agar tidak tumpang tindih dengan header/navbar) --}}
+    <button id="themeToggle"
+        class="fixed top-24 right-5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
+               shadow-md p-3 rounded-full flex items-center justify-center cursor-pointer transition">
+        <i id="themeIcon" class="bi text-gray-700 dark:text-yellow-300 text-xl transition"></i>
+    </button>
+
+<script>
+    // ✅ Skrip Dark Mode
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+
+        // Cek preferensi tema dari localStorage atau sistem
+        const isDarkMode = localStorage.getItem('theme') === 'dark' || 
+                           (localStorage.getItem('theme') === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        // Fungsi untuk mengaplikasikan tema
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeIcon.classList.remove("bi-moon-fill");
+                themeIcon.classList.add("bi-sun-fill");
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.classList.remove("bi-sun-fill");
+                themeIcon.classList.add("bi-moon-fill");
+            }
+        }
+
+        // Aplikasikan tema saat pertama kali load
+        applyTheme(isDarkMode);
+
+        // Toggle Tema saat tombol diklik
+        themeToggle.addEventListener("click", function () {
+            const isCurrentlyDark = document.documentElement.classList.toggle("dark");
+
+            // Simpan preferensi
+            if (isCurrentlyDark) {
+                localStorage.setItem("theme", "dark");
+            } else {
+                localStorage.setItem("theme", "light");
+            }
+
+            // Update ikon
+            applyTheme(isCurrentlyDark);
+        });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+
+    // Pastikan ditambahkan ke HTML root
+    const html = document.documentElement;
+
+    // Load preferensi
+    if (localStorage.getItem("theme") === "dark") {
+        html.classList.add("dark");
+    }
+
+    // Update ikon
+    updateIcon();
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+        html.classList.toggle("dark");
+
+        if (html.classList.contains("dark")) {
+            localStorage.setItem("theme", "dark");
+        } else {
+            localStorage.setItem("theme", "light");
+        }
+
+        updateIcon();
+    });
+});
+
+</script>
+
+
 </body>
 </html>

@@ -10,14 +10,14 @@
       <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
   @endif
 
-  <table class="min-w-full bg-white shadow rounded-xl">
+  <table class="min-w-full bg-light shadow rounded-xl">
     <thead class="bg-gray-200">
       <tr>
-        <th class="py-2 px-4">Poster</th>
-        <th class="py-2 px-4">Judul</th>
-        <th class="py-2 px-4">Genre</th>
-        <th class="py-2 px-4">Tahun</th>
-        <th class="py-2 px-4">Aksi</th>
+        <th class="py-2 px-4 text-black">Poster</th>
+        <th class="py-2 px-4 text-black">Judul</th>
+        <th class="py-2 px-4 text-black">Genre</th>
+        <th class="py-2 px-4 text-black">Tahun</th>
+        <th class="py-2 px-4 text-black">Aksi</th>
       </tr>
     </thead>
     <tbody>
@@ -28,9 +28,9 @@
               <img src="{{ asset('storage/'.$film->poster) }}" class="w-16 h-20 object-cover rounded">
             @endif
           </td>
-          <td class="py-2 px-4">{{ $film->judul }}</td>
-          <td class="py-2 px-4">{{ $film->genre->name ?? '-' }}</td>
-          <td class="py-2 px-4">{{ $film->tahun_rilis }}</td>
+          <td class="py-2 px-4 text-light">{{ $film->judul }}</td>
+          <td class="py-2 px-4 text-light">{{ $film->genre->name ?? '-' }}</td>
+          <td class="py-2 px-4 text-light">{{ $film->tahun_rilis }}</td>
           <td class="py-2 px-4 space-x-2">
             <a href="{{ route('admin.films.edit', $film) }}" class="text-blue-600 hover:underline">Edit</a>
             <form action="{{ route('admin.films.destroy', $film) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus film ini?')">

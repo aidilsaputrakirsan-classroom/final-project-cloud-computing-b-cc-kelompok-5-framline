@@ -35,6 +35,56 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+  /* Default: Dark Mode (Tailwind sudah dark) */
+
+  /* LIGHT MODE OVERRIDE */
+  body.light {
+    background: #f5f5f5 !important;
+    color: #111 !important;
+  }
+
+  body.light .text-white {
+    color: #111 !important;
+  }
+
+  body.light .bg-dark,
+  body.light .bg-gradient-to-b {
+    background: #ffffff !important;
+  }
+
+  body.light .bg-slate-800,
+  body.light .bg-slate-800\/70,
+  body.light .bg-slate-800\/60 {
+    background: #e5e7eb !important; /* slate-200 */
+  }
+
+  body.light .border-slate-700 {
+    border-color: #999 !important;
+  }
+
+  body.light input {
+    color: #111 !important;
+  }
+
+  body.light .text-gray-400 {
+    color: #666 !important;
+  }
+</style>
+
+<script>
+  // === THEME SYSTEM ===
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    document.body.classList.toggle("light", savedTheme === "light");
+  });
+
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+  }
+</script>
+
   </head>
 
   <body class="bg-dark text-white font-sans">
@@ -44,9 +94,15 @@
       <!-- Header -->
       <div class="flex justify-between items-center">
         <img src="/logo.png" alt="Cinema XXI" class="h-10" />
+        <div class="space-x-4 flex items-center">
+          <!-- 🔘 Toggle Theme -->
+          <button 
+              onclick="toggleTheme()" 
+              class="px-3 py-2 border border-netflix rounded-full hover:bg-netflix transition"
+          >
+              <i class="fa fa-moon"></i>
+          </button>
 
-        <div class="space-x-4">
-          <!-- ✅ Link ke halaman login -->
           <a
             href="{{ route('login') }}"
             class="px-4 py-2 border border-netflix rounded-full hover:bg-netflix transition"
@@ -54,7 +110,6 @@
             Login
           </a>
 
-          <!-- ✅ Link ke halaman register -->
           <a
             href="{{ route('register') }}"
             class="px-4 py-2 bg-netflix rounded-full hover:bg-red-600 transition"
@@ -62,6 +117,7 @@
             Register
           </a>
         </div>
+
       </div>
 
       <!-- Hero Section -->

@@ -9,6 +9,49 @@
     <div class="w-full max-w-2xl">
 
         <!-- Breadcrumb -->
+         <!-- Tombol Dark Mode -->
+<button id="themeToggle"
+    class="fixed top-5 right-5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 
+           shadow-md p-3 rounded-full flex items-center justify-center cursor-pointer transition">
+    <i id="themeIcon" class="bi bi-moon-fill text-gray-700 dark:text-yellow-300 text-xl"></i>
+</button>
+
+<script>
+    // Cek localStorage -> set tema sebelumnya
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+    }
+
+    // Update ikon sesuai tema
+    function updateIcon() {
+        const icon = document.getElementById("themeIcon");
+        if (document.documentElement.classList.contains('dark')) {
+            icon.classList.remove("bi-moon-fill");
+            icon.classList.add("bi-sun-fill");
+        } else {
+            icon.classList.remove("bi-sun-fill");
+            icon.classList.add("bi-moon-fill");
+        }
+    }
+
+    // Jalankan saat awal
+    updateIcon();
+
+    // Toggle Tema saat tombol diklik
+    document.getElementById("themeToggle").addEventListener("click", function () {
+        document.documentElement.classList.toggle("dark");
+
+        // Simpan preferensi
+        if (document.documentElement.classList.contains('dark')) {
+            localStorage.setItem("theme", "dark");
+        } else {
+            localStorage.setItem("theme", "light");
+        }
+
+        updateIcon();
+    });
+</script>
+
         <p class="text-sm text-gray-500 mb-4 text-center md:text-left">Beranda /
             <span class="text-gray-800 font-medium">My m.tix</span>
         </p>
@@ -35,27 +78,8 @@
         <!-- Pengaturan -->
         <div class="space-y-6">
 
-            <!-- Bagian Pengaturan -->
-            <div>
-                <h4 class="font-semibold text-gray-600 text-sm uppercase tracking-wider mb-3">Pengaturan</h4>
-
-                <ul class="space-y-2">
-                    <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-shield-lock text-gray-600 text-lg"></i>
-                            <span class="font-medium">Keamanan Akun</span>
-                        </div>
-                        <i class="bi bi-chevron-right text-gray-400"></i>
-                    </li>
-                    <li class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-translate text-gray-600 text-lg"></i>
-                            <span class="font-medium">Bahasa</span>
-                        </div>
-                        <i class="bi bi-chevron-right text-gray-400"></i>
-                    </li>
-                </ul>
-            </div>
+           
+            
 
             <!-- Bagian Aktivitas -->
             <div>
