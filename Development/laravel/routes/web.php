@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::get('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::post('/profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
     // Favorit & History
     Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');

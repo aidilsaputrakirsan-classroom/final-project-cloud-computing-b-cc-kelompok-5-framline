@@ -96,6 +96,14 @@
 
     <div class="w-full max-w-2xl">
 
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="{{ route('home') }}" class="inline-flex items-center text-gray-400 hover:text-white transition-colors">
+                <i class="bi bi-arrow-left mr-2"></i>
+                Kembali
+            </a>
+        </div>
+
         <!-- Breadcrumb -->
         <p class="breadcrumb-netflix mb-3 text-center md:text-left">
             Beranda / <span>My m.tix</span>
@@ -128,22 +136,14 @@
 
             <ul class="space-y-2">
 
-                <li class="menu-item flex items-center justify-between">
+                <li onclick="window.location.href='{{ route('profile.change-password') }}'"
+                    class="menu-item flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <i class="bi bi-shield-lock menu-icon"></i>
-                        <span class="menu-text">Keamanan Akun</span>
+                        <span class="menu-text">Ganti Password</span>
                     </div>
                     <i class="bi bi-chevron-right text-gray-500"></i>
                 </li>
-
-                <li class="menu-item flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i class="bi bi-translate menu-icon"></i>
-                        <span class="menu-text">Bahasa</span>
-                    </div>
-                    <i class="bi bi-chevron-right text-gray-500"></i>
-                </li>
-
             </ul>
         </div>
 
