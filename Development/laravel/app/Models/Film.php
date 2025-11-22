@@ -19,7 +19,7 @@ class Film extends Model
         'durasi',
         'genre_id',
         'user_id',
-        'trailer_url', 
+        'trailer_url',
     ];
 
     /*
@@ -71,14 +71,27 @@ class Film extends Model
 
         if (!$url) return null;
 
+        // If it's already an 11-char video ID
+        if (strlen($url) == 11 && preg_match('/^[a-zA-Z0-9_-]+$/', $url)) {
+            return $url;
+        }
+
         // Format: https://www.youtube.com/watch?v=xxxxx
         if (strpos($url, 'v=') !== false) {
-            return explode('v=', $url)[1];
+            $parts = explode('v=', $url);
+            return explode('&', $parts[1])[0]; // Handle additional params
         }
 
         // Format: https://youtu.be/xxxx
         if (strpos($url, 'youtu.be/') !== false) {
-            return explode('youtu.be/', $url)[1];
+            $parts = explode('youtu.be/', $url);
+            return explode('?', $parts[1])[0]; // Handle additional params
+        }
+
+        // Format: https://www.youtube.com/embed/xxxxx
+        if (strpos($url, 'embed/') !== false) {
+            $parts = explode('embed/', $url);
+            return explode('?', $parts[1])[0]; // Handle additional params
         }
 
         return null;
@@ -101,6 +114,26 @@ class Film extends Model
     {
         return $this->youtube_id
             ? "https://img.youtube.com/vi/" . $this->youtube_id . "/hqdefault.jpg"
+            : null;
+    }
+
+    /**
+     * URL lengkap untuk menonton di YouTube.
+     */
+    public function getTrailerWatchUrlAttribute()
+    {
+        return $this->youtube_id
+            ? "https://www.youtube.com/watch?v=" . $this->youtube_id
+            : null;
+    }
+
+    /**
+     * HTML embed untuk iframe YouTube.
+     */
+    public function getOEmbedHtmlAttribute()
+    {
+        return $this->embed_url
+            ? '<iframe width="100%" height="100%" src="' . $this->embed_url . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
             : null;
     }
 }

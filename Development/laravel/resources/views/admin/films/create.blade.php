@@ -33,8 +33,9 @@
       {{-- Trailer URL --}}
       <div>
         <label class="block text-gray-200 font-semibold mb-2">Link Trailer (YouTube)</label>
-        <input type="text" name="trailer_url" placeholder="https://youtu.be/xxxxx"
+        <input type="text" name="trailer_url" placeholder="https://youtu.be/xxxxx atau ID video (11 karakter)"
                class="block w-full border border-red-800/60 rounded-lg bg-[#0d0d0d] text-gray-200 p-3">
+        <p class="text-sm text-gray-400 mt-1">Masukkan URL YouTube lengkap atau hanya ID video (contoh: zsXEPrTcu8QjjucD8)</p>
       </div>
 
       {{-- Sinopsis --}}

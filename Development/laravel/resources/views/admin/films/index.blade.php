@@ -154,6 +154,7 @@
                     <th>Aktor</th>
                     <th>Durasi</th>
                     <th>Genre</th>
+                    <th>Trailer</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -176,6 +177,13 @@
                         <td class="text-gray-300">{{ $film->aktor }}</td>
                         <td class="text-gray-300">{{ $film->durasi }} menit</td>
                         <td class="text-gray-300">{{ $film->genre->name ?? '-' }}</td>
+                        <td class="text-gray-300">
+                            @if($film->trailer_url)
+                                <span class="text-green-400">✓ Ada</span>
+                            @else
+                                <span class="text-red-400">✗ Tidak Ada</span>
+                            @endif
+                        </td>
                         <td class="space-x-2 flex items-center">
                             <a href="{{ route('admin.films.edit', $film) }}" class="action-btn btn-edit">Edit</a>
                             <form action="{{ route('admin.films.destroy', $film) }}" method="POST" onsubmit="return confirm('Yakin hapus film ini?')" class="inline-block">

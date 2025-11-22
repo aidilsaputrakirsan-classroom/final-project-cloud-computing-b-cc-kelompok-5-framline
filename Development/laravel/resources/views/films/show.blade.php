@@ -38,8 +38,8 @@
                 <!-- Poster -->
                 <div class="md:w-1/3 relative overflow-hidden">
                     @if($film->poster)
-                        <img 
-                            src="{{ asset('storage/' . $film->poster) }}" 
+                        <img
+                            src="{{ asset('storage/' . $film->poster) }}"
                             class="w-full h-[450px] object-cover brightness-90 hover:brightness-100 transition-all duration-300"
                         >
                     @else
@@ -82,13 +82,13 @@
                     <!-- FAVORITE BUTTON -->
                     <div class="mt-4">
 
-                        <button 
+                        <button
                             id="favoriteBtn"
                             data-film-id="{{ $film->id }}"
                             data-auth="{{ auth()->check() ? '1' : '0' }}"
                             class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white font-semibold text-sm flex items-center gap-2 transition"
                         >
-                            <i id="favoriteIcon" 
+                            <i id="favoriteIcon"
                                class="bi {{ auth()->check() && auth()->user()->favoriteFilms()->where('film_id', $film->id)->exists() ? 'bi-heart-fill' : 'bi-heart' }}">
                             </i>
 
@@ -128,22 +128,29 @@
         <div class="bg-[#0f0f0f] border border-white/10 rounded-2xl p-8 shadow-lg mb-10">
             <h2 class="text-2xl font-bold mb-4">Trailer</h2>
 
-            <div class="aspect-video w-full rounded-xl overflow-hidden border border-white/10 shadow-lg">
-                <iframe 
-                    src="{{ $film->trailer_url }}" 
-                    class="w-full h-full"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+            <div class="mb-4">
+                <a
+                    href="{{ $film->trailer_watch_url }}"
+                    target="_blank"
+                    class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white font-semibold text-sm inline-flex items-center gap-2 transition"
+                >
+                    <i class="bi bi-play-circle-fill"></i>
+                    Tonton Trailer di YouTube
+                </a>
             </div>
+
+            @if($film->o_embed_html)
+            <div class="aspect-video w-full rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                {!! $film->o_embed_html !!}
+            </div>
+            @endif
         </div>
         @endif
 
         <!-- BUTTON KEMBALI -->
         <div class="text-center mt-10 mb-10">
-            <a 
-                href="{{ url()->previous() }}" 
+            <a
+                href="{{ url()->previous() }}"
                 class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 font-semibold transition"
             >
                 <i class="bi bi-arrow-left"></i>
