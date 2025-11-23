@@ -5,60 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SI XXI')</title>
 
-    {{-- Tailwind & Font --}}
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    {{-- Global Style --}}
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #000;
-            color: white;
-            min-height: 100vh;
-        }
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .nav-btn-primary {
-            background-color: #e50914;
-            color: white;
-        }
-        .nav-btn-primary:hover {
-            background-color: #b20710;
-        }
-        .nav-btn-outline {
-            border: 1px solid #e50914;
-            color: white;
-        }
-        .nav-btn-outline:hover {
-            background-color: #e50914;
-            color: white;
-        }
-    </style>
 
-    @stack('styles')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen flex flex-col bg-black text-white">
+<body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
-    {{-- ✅ NAVBAR: Cinematic Netflix Style --}}
-    <header class="fixed top-0 left-0 w-full z-50 bg-black border-b border-neutral-800">
-        <div class="flex items-center justify-between px-6 md:px-12 py-4">
+    {{-- Header Navbar --}}
+    <header class="flex justify-between items-center px-6 md:px-12 py-4 bg-white dark:bg-gray-800 shadow">
 
-            {{-- 🔥 Logo SI XXI --}}
-            <a href="{{ route('home') }}" class="text-3xl font-extrabold tracking-wide">
-                <span class="text-white">SI</span><span class="text-red-600"> XXI</span>
-            </a>
+        {{-- Logo --}}
+        <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            SI <span class="text-red-600 dark:text-red-400">XXI</span>
+        </span>
 
-            {{-- 🔥 Menu kanan (Login/Register atau Profil) --}}
-            <div class="flex items-center space-x-4 text-sm font-medium">
+        {{-- Bagian Kanan Navbar --}}
+        <div class="flex items-center space-x-6 text-sm font-medium">
+
+            {{-- Toggle Tema --}}
+            <button 
+                id="themeToggle"
+                class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+            >
+                <!-- Icon Light -->
+                <svg id="iconLight" xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-yellow-500"
+                    viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 18a6 6 0 100-12 6 6 0 000 12z"/>
+                </svg>
+
+                <!-- Icon Dark -->
+                <svg id="iconDark" xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-gray-200 hidden"
+                    viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.64 13a1 1 0 00-1.05-.14 8 8 0 01-10.45-10.45 1 1 0 00-.14-1.05A1 1 0 008 2a10 10 0 1014 14 1 1 0 00-.36-1z"/>
+                </svg>
+            </button>
+
                 @auth
-                    <span class="hidden sm:block text-gray-300">
+                    <span class="hidden sm:block text-red-500 dark:text-gray-300">
                         Hi, {{ Auth::user()->name }}
                     </span>
 
@@ -95,20 +83,51 @@
                     <a href="{{ route('login') }}" class="nav-btn nav-btn-outline">Login</a>
                     <a href="{{ route('register') }}" class="nav-btn nav-btn-primary">Register</a>
                 @endguest
-            </div>
         </div>
     </header>
 
-    {{-- Spacer agar konten tidak ketiban header --}}
-    <div class="h-20"></div>
-
-    {{-- ✅ MAIN CONTENT --}}
     <main class="flex-grow">
         @yield('content')
     </main>
 
-    {{-- Scripts --}}
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const html = document.documentElement;
+            const toggleBtn = document.getElementById("themeToggle");
+            const iconLight = document.getElementById("iconLight");
+            const iconDark = document.getElementById("iconDark");
+
+            // Apply saved theme
+            if (localStorage.getItem("theme") === "dark") {
+                html.classList.add("dark");
+                iconLight.classList.add("hidden");
+                iconDark.classList.remove("hidden");
+            } else {
+                html.classList.remove("dark");
+                iconLight.classList.remove("hidden");
+                iconDark.classList.add("hidden");
+            }
+
+            toggleBtn.addEventListener("click", () => {
+                html.classList.toggle("dark");
+                const isDark = html.classList.contains("dark");
+
+                // Update icons
+                if (isDark) {
+                    iconLight.classList.add("hidden");
+                    iconDark.classList.remove("hidden");
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    iconLight.classList.remove("hidden");
+                    iconDark.classList.add("hidden");
+                    localStorage.setItem("theme", "light");
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

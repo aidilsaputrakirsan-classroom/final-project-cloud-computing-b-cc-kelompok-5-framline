@@ -2,10 +2,7 @@
 @section('title', 'Admin - Kelola Film')
 
 @push('styles')
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
+<!-- <style>
     body {
         background: radial-gradient(circle at top, #141414 0%, #000 100%);
         color: #fff;
@@ -122,7 +119,57 @@
     .fadeInUp {
         animation: fadeInUp 0.8s ease forwards;
     }
-</style>
+
+    /* ============================ */
+    /*  THEAD – Abu-abu muda        */
+    /* ============================ */
+    thead {
+        background: #e5e5e5 !important; /* abu muda */
+    }
+
+    .dark thead {
+        background: #2a2a2a !important; /* abu gelap agar cocok dark mode */
+    }
+
+    /* ============================ */
+    /*  Warna Teks TD               */
+    /* ============================ */
+    td {
+        color: #000 !important; /* light mode = hitam */
+    }
+
+    .dark td {
+        color: #d1d1d1 !important; /* dark mode = abu muda */
+    }
+
+    /* ============================ */
+    /*  Border Garis Tabel          */
+    /* ============================ */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #ccc;  /* border luar tabel */
+    }
+
+    thead tr, tbody tr {
+        border-bottom: 1px solid #bbb;     /* garis antar baris light mode */
+    }
+
+    .dark thead tr, 
+    .dark tbody tr {
+        border-bottom: 1px solid rgba(255,255,255,0.15);  /* versi dark */
+    }
+
+    /* Saat hover tetap sama seperti style Anda */
+    tbody tr:hover {
+        background: rgba(229, 9, 20, 0.15);
+    }
+
+    .dark tbody tr:hover {
+        background: rgba(229, 9, 20, 0.25);
+    }
+
+</style> -->
 @endpush
 
 @section('content')
@@ -142,57 +189,74 @@
         </div>
     @endif
 
-    <div class="table-container overflow-x-auto">
-        <table>
-            <thead>
+    <div class="overflow-x-auto rounded-xl shadow border border-gray-300 dark:border-neutral-700">
+        <table class="w-full border-collapse">
+            <!-- THEAD -->
+            <thead class="bg-gray-200 dark:bg-neutral-700">
                 <tr class="text-sm uppercase tracking-wider">
-                    <th>Poster</th>
-                    <th>Judul</th>
-                    <th>Sinopsis</th>
-                    <th>Tahun Rilis</th>
-                    <th>Sutradara</th>
-                    <th>Aktor</th>
-                    <th>Durasi</th>
-                    <th>Genre</th>
-                    <th>Trailer</th>
-                    <th>Aksi</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Poster</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Judul</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Sinopsis</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Tahun Rilis</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Sutradara</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Aktor</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Durasi</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Genre</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Trailer</th>
+                    <th class="px-4 py-3 text-left font-semibold text-black dark:text-white">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+
+            <!-- TBODY -->
+            <tbody class="text-sm">
                 @foreach ($films as $film)
-                    <tr>
-                        <td>
-                            @if ($film->poster)
-                                <img src="{{ asset('storage/'.$film->poster) }}" class="w-16 h-20 object-cover poster-img">
-                            @else
-                                <span class="text-gray-500 text-sm italic">No Poster</span>
-                            @endif
-                        </td>
-                        <td class="font-semibold text-white">{{ $film->judul }}</td>
-                        <td class="text-gray-400 text-sm max-w-xs truncate" title="{{ $film->sinopsis }}">
-                            {{ Str::limit($film->sinopsis, 100) }}
-                        </td>
-                        <td class="text-gray-300">{{ $film->tahun_rilis }}</td>
-                        <td class="text-gray-300">{{ $film->sutradara }}</td>
-                        <td class="text-gray-300">{{ $film->aktor }}</td>
-                        <td class="text-gray-300">{{ $film->durasi }} menit</td>
-                        <td class="text-gray-300">{{ $film->genre->name ?? '-' }}</td>
-                        <td class="text-gray-300">
-                            @if($film->trailer_url)
-                                <span class="text-green-400">✓ Ada</span>
-                            @else
-                                <span class="text-red-400">✗ Tidak Ada</span>
-                            @endif
-                        </td>
-                        <td class="space-x-2 flex items-center">
-                            <a href="{{ route('admin.films.edit', $film) }}" class="action-btn btn-edit">Edit</a>
-                            <form action="{{ route('admin.films.destroy', $film) }}" method="POST" onsubmit="return confirm('Yakin hapus film ini?')" class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="action-btn btn-delete">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
+                <tr class="border-t border-gray-300 dark:border-neutral-700 hover:bg-gray-300/60 dark:hover:bg-red-600/20 transition">
+                    <td class="px-4 py-3">
+                        @if ($film->poster)
+                            <img src="{{ asset('storage/'.$film->poster) }}" 
+                                class="w-16 h-20 object-cover rounded border border-gray-300 dark:border-neutral-700 shadow-sm">
+                        @else
+                            <span class="text-gray-500 text-sm italic">No Poster</span>
+                        @endif
+                    </td>
+
+                    <td class="px-4 py-3 font-semibold text-black dark:text-gray-200">{{ $film->judul }}</td>
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-400 max-w-xs truncate" title="{{ $film->sinopsis }}">
+                        {{ Str::limit($film->sinopsis, 100) }}
+                    </td>
+
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $film->tahun_rilis }}</td>
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $film->sutradara }}</td>
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $film->aktor }}</td>
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $film->durasi }} menit</td>
+                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $film->genre->name ?? '-' }}</td>
+
+                    <td class="px-4 py-3">
+                        @if($film->trailer_url)
+                            <span class="text-green-600 dark:text-green-400">✓ Ada</span>
+                        @else
+                            <span class="text-red-600 dark:text-red-400">✗ Tidak Ada</span>
+                        @endif
+                    </td>
+
+                    <td class="px-4 py-3 flex gap-2">
+                        <a href="{{ route('admin.films.edit', $film) }}" 
+                        class="px-3 py-1 rounded-full text-white bg-blue-600 hover:bg-blue-700 text-xs font-semibold">
+                            Edit
+                        </a>
+
+                        <form action="{{ route('admin.films.destroy', $film) }}" 
+                            method="POST" 
+                            onsubmit="return confirm('Yakin hapus film ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                class="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700 text-xs font-semibold">
+                                Hapus
+                            </button>
+                        </form>
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
