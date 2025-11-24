@@ -82,4 +82,30 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Foto profil berhasil diperbarui.');
     }
+
+    // form change password
+    public function changePassword()
+    {
+        return view('profile.change-password');
+    }
+
+    // update password
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password saat ini salah.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Password berhasil diubah.');
+    }
 }

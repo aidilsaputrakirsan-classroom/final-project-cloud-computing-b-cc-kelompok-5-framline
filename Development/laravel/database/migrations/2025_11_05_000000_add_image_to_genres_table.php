@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('genres', function (Blueprint $table) {
-            $table->id(); // genre_id
-            $table->string('name')->unique();
-            $table->timestamps();
+        Schema::table('genres', function (Blueprint $table) {
+            $table->string('image')->nullable()->after('name');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('genres');
+        Schema::table('genres', function (Blueprint $table) {
+            $table->dropColumn('image');
+        });
     }
 };

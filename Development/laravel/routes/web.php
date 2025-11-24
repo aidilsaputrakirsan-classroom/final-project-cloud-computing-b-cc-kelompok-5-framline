@@ -7,6 +7,7 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +15,22 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 
-// 🏠 Halaman utama (Landing Page)
-Route::get('/', function () {
-    return view('index'); // resources/views/index.blade.php
-})->name('landing');
+// Landing page
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-// 🎬 Film publik (tanpa login)
+// Film public (index, detail, dan search)
+Route::get('/films', [FilmController::class, 'publicIndex'])->name('films.index');
+Route::get('/films/search', [FilmController::class, 'publicIndex'])->name('films.search');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
-Route::get('/search', [FilmController::class, 'index'])->name('films.search');
+
+// Jika user belum login menekan “Tambah Favorit”
+Route::get('/login-required', function () {
+    return response()->json([
+        'status' => 'need_login',
+        'message' => 'Anda harus login terlebih dahulu untuk menambahkan film ke favorit.'
+    ]);
+})->name('login.required');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,54 +39,57 @@ Route::get('/search', [FilmController::class, 'index'])->name('films.search');
 */
 Auth::routes();
 
-// Setelah login → dashboard user biasa
+// Setelah login → home/user dashboard
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
 /*
 |--------------------------------------------------------------------------
-| 👤 User Routes (Hanya untuk user login)
+| 👤 User Routes (login wajib)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-    // Profil pengguna
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'show'])->name('show');
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
-        Route::put('/', [ProfileController::class, 'update'])->name('update');
-        Route::post('/photo', [ProfileController::class, 'updatePhoto'])->name('photo.update');
 
-        // Favorit & Riwayat tontonan
-        Route::get('/favorites', [ProfileController::class, 'favorites'])->name('favorites');
-        Route::get('/history', [ProfileController::class, 'history'])->name('history');
-    });
+    // Profil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::get('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::post('/profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
-    // Toggle favorit film
-    Route::post('/films/{film}/favorite', [FilmController::class, 'toggleFavorite'])->name('films.favorite');
+    // Favorit & History
+    Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
+    Route::get('/profile/history', [ProfileController::class, 'history'])->name('profile.history');
+
+    // Toggle favorit
+    Route::post('/films/{film}/favorite', [FilmController::class, 'toggleFavorite'])
+        ->name('films.favorite');
 });
+
 
 /*
 |--------------------------------------------------------------------------
-| 🧑‍💼 Admin Routes (Hanya untuk admin)
+| 🧑‍💼 Admin Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'is_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
         // Dashboard admin
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Kelola film (CRUD)
+        // Kelola film
         Route::resource('/films', FilmController::class);
 
-        // Kelola genre (CRUD terbatas)
-        Route::resource('/genres', GenreController::class)->only(['index', 'store', 'destroy']);
+        // Kelola genre
+        Route::resource('/genres', GenreController::class);
 
-        // Kelola pengguna
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [AdminDashboardController::class, 'users'])->name('index');
-            Route::post('/', [AdminDashboardController::class, 'store'])->name('store');
-            Route::put('/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('updateRole');
-            Route::delete('/{user}', [AdminDashboardController::class, 'destroyUser'])->name('destroy');
-        });
+        // Kelola user
+        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
+        Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
+        Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
     });

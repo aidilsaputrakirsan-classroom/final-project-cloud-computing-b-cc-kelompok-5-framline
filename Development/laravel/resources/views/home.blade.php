@@ -1,92 +1,162 @@
 @extends('layouts.app')
-@section('title', 'Cinema XXI - Home')
+@section('title', 'Cinema XXI - Feel the Movies Beyond')
+
+@push('styles')
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    netflix: '#e50914',
+                    dark: '#141414',
+                },
+                fontFamily: {
+                    sans: ['Poppins', 'sans-serif'],
+                },
+            },
+        },
+    };
+</script>
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+    body {
+        background: radial-gradient(circle at top, #141414 0%, #000 100%);
+        color: white;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* 🎥 Hero background */
+    .hero-bg {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(20,20,20,0.95)),
+                    url('https://i.pinimg.com/736x/f4/34/7b/f4347b3e917a6bdbac9e58abe6c36a66.jpg') center/cover no-repeat;
+        padding: 120px 20px;
+        text-align: center;
+    }
+
+    /* 🔍 Search Bar */
+    .search-bar {
+        background: rgba(30, 30, 30, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        max-width: 600px;
+        margin: 0 auto;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .search-bar:focus-within {
+        box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+    }
+
+    .search-bar input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: white;
+        padding: 10px;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-bar input::placeholder {
+        color: #aaa;
+    }
+
+    .search-bar button {
+        background: #e50914;
+        border-radius: 9999px;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: background 0.3s ease;
+    }
+
+    .search-bar button:hover {
+        background: #ff141f;
+    }
+</style>
+@endpush
+
 @section('content')
-    <h1 class="text-2xl font-bold text-center mt-10">Selamat Datang!</h1>
+<body class="bg-dark text-white font-sans">
 
-    <!-- Hero Section -->
-    <section class="text-center mt-12">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Welcome back, {{ Auth::user()->name }}!</h1>
-        <p class="mt-2 text-gray-600">Enjoy the latest movies and genres from Cinema XXI</p>
-        <div class="mt-6 flex justify-center">
-            <div class="relative w-80 md:w-1/2">
-                <input type="text" placeholder="Search movies or cinemas"
-                       class="w-full px-6 py-3 rounded-full shadow text-gray-700 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     class="w-5 h-5 absolute right-5 top-3.5 text-gray-400" fill="none"
-                     viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
-                </svg>
-            </div>
-        </div>
-    </section>
+<!-- 🎬 HERO -->
+<section class="hero-bg">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">
+        Feel the <span class="text-netflix">Movies</span> Beyond
+    </h1>
 
-    <!-- 🎬 Browse by Genre & Year -->
-    <section x-data="{ showAllGenre: false, selectedYear: '' }" class="mt-16 px-8 md:px-16">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <h2 class="text-2xl font-semibold text-gray-800">Browse by Genre & Year</h2>
+    <p class="text-gray-300 text-lg mb-10">
+        Discover, explore, and experience films like never before.
+    </p>
 
-            <div class="flex items-center gap-4">
-                <!-- Dropdown Tahun -->
-                <div class="relative">
-                    <select x-model="selectedYear"
-                            class="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 focus:ring-teal-500 focus:border-teal-500">
-                        <option value="">All Years</option>
-                        @foreach (range(date('Y'), date('Y') - 10) as $year)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endforeach
-                    </select>
-                </div>
+    <form method="GET" action="{{ route('films.search') }}" class="search-bar">
+        <input type="text" name="search" placeholder="Search movies or cinemas...">
+        <button type="submit">
+            <i class="fa fa-search"></i>
+        </button>
+    </form>
+</section>
 
-                <!-- Tombol Lihat Semua -->
-                <button @click="showAllGenre = !showAllGenre"
-                        class="text-teal-700 font-medium hover:underline focus:outline-none">
-                    <span x-text="showAllGenre ? 'Show Less ←' : 'See All →'"></span>
-                </button>
-            </div>
-        </div>
+<!-- 🎞️ GENRES -->
+<section class="px-8 md:px-16 py-16 bg-dark">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold">Browse by Genre</h2>
+        <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
+    </div>
 
-        <!-- Grid Genre -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            @foreach (['Action', 'Drama', 'Comedy', 'Horror', 'Romance', 'Adventure', 'Sci-Fi', 'Animation', 'Fantasy', 'Mystery'] as $index => $genre)
-                <div x-show="showAllGenre || {{ $index }} < 6"
-                     x-transition
-                     class="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 cursor-pointer"
-                     @click="window.location.href='{{ url('/films?genre=' . strtolower($genre)) }}' + (selectedYear ? '&year=' + selectedYear : '')">
-                    <div class="p-4 text-center">
-                        <div class="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-400 text-white font-bold text-lg">
-                            {{ strtoupper(substr($genre, 0, 1)) }}
-                        </div>
-                        <h3 class="mt-3 text-gray-800 font-medium text-sm md:text-base">{{ $genre }}</h3>
-                        <!-- Tahun muncul kalau dipilih -->
-                        <p x-show="selectedYear" class="text-gray-500 text-xs mt-1" x-text="'Year: ' + selectedYear"></p>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </section>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
+        @foreach ($genres as $genre)
+            <button onclick="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}'"
+                    class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition">
 
-    <!-- 🎥 Now Playing Section -->
-    <section x-data="{ showAll: false }" class="mt-16 px-8 md:px-16 mb-20">
-        <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-semibold text-gray-800">Now Playing</h2>
-            <button @click="showAll = !showAll" class="text-teal-700 font-medium hover:underline focus:outline-none">
-                <span x-text="showAll ? 'Show Less ←' : 'See All →'"></span>
+                @if($genre->image)
+                    <img src="{{ asset('storage/' . $genre->image) }}"
+                         class="w-10 h-10 rounded-full mx-auto mb-2 object-cover">
+                @endif
+
+                {{ $genre->name }}
             </button>
-        </div>
+        @endforeach
+    </div>
+</section>
 
-        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            @foreach (range(1, 12) as $i)
-                <div x-show="showAll || {{ $i }} <= 5"
-                     x-transition
-                     class="bg-white rounded-xl shadow hover:shadow-lg transition p-2">
-                    <img src="https://dummyimage.com/200x280/{{ ['ccc','aaa','999','777','555','444','333','222','111','000','888','666'][$i-1] }}/fff&text=Movie+{{ $i }}"
-                         class="rounded-lg w-full h-auto">
+<!-- 🎥 NOW PLAYING -->
+<section class="px-8 md:px-16 pb-20 bg-dark">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold">Now Playing</h2>
+        <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+        @foreach ($films as $film)
+            <div onclick="window.location.href='{{ route('films.show', $film) }}'"
+                 class="bg-slate-800/60 rounded-2xl overflow-hidden hover:scale-105 transition-transform shadow-lg cursor-pointer">
+
+                <img src="{{ asset('storage/' . $film->poster) }}"
+                     class="w-full h-56 object-cover">
+
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg">{{ $film->judul }}</h3>
+                    <p class="text-sm text-gray-400">{{ $film->genre->name ?? 'Unknown' }} | {{ $film->tahun_rilis }}</p>
                 </div>
-            @endforeach
-        </div>
-    </section>
+            </div>
+        @endforeach
+    </div>
+</section>
 
-    {{-- Load Alpine.js --}}
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</body>
 @endsection
