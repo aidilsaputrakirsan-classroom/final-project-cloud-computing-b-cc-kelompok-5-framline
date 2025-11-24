@@ -25,11 +25,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-  body {
+  /* body {
     background: radial-gradient(circle at top, #141414 0%, #000 100%);
     color: #fff;
     font-family: 'Poppins', sans-serif;
-  }
+  } */
 
   .cinema-hero {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(20, 20, 20, 0.95)),
@@ -94,7 +94,7 @@
 
 <!-- 🎬 HERO SECTION -->
 <section class="cinema-hero">
-  <h1 class="text-5xl md:text-6xl font-bold mb-4">
+  <h1 class="text-5xl md:text-6xl font-bold mb-4 text-white">
     Feel the <span class="text-netflix">Movies</span> Beyond
   </h1>
 
@@ -112,7 +112,7 @@
 </section>
 
 <!-- 🎞️ GENRE SECTION -->
-<section class="px-8 md:px-16 py-16 bg-dark">
+<section class="px-8 md:px-16 py-16 bg-white dark:bg-black">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Browse by Genre & Year</h2>
 
@@ -132,7 +132,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
     @foreach ($genres as $genre)
       <button onclick="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}'"
-              class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition">
+              class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition text-grey-200 dark:text-white">
 
         @if($genre->image)
           <img src="{{ asset('storage/' . $genre->image) }}"
@@ -146,7 +146,7 @@
 </section>
 
 <!-- 🎥 NOW PLAYING -->
-<section class="px-8 md:px-16 pb-20 bg-dark">
+<section class="px-8 md:px-16 pb-20 bg-white dark:bg-black">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Now Playing</h2>
     <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
