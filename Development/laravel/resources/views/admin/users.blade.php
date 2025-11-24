@@ -2,253 +2,196 @@
 
 @section('title', 'Admin - Kelola Pengguna')
 
-@push('styles')
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-    body {
-        background: radial-gradient(circle at top, #141414 0%, #000 100%);
-        color: #fff;
-        font-family: 'Poppins', sans-serif;
-        overflow-x: hidden;
-    }
-
-    h1, h2, th {
-        color: #fff;
-    }
-
-    .table-container {
-        background: rgba(20, 20, 20, 0.95);
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 8px 20px rgba(229, 9, 20, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(6px);
-    }
-
-    .add-btn {
-        background: #e50914;
-        color: #fff;
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 10px 20px;
-        transition: all 0.3s ease;
-    }
-
-    .add-btn:hover {
-        background: #b00610;
-        transform: translateY(-2px);
-        box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    thead {
-        background: rgba(229, 9, 20, 0.1);
-    }
-
-    th, td {
-        padding: 12px 16px;
-        text-align: left;
-    }
-
-    tbody tr {
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
-    }
-
-    tbody tr:hover {
-        background: rgba(229, 9, 20, 0.15);
-        transform: scale(1.01);
-    }
-
-    .action-btn {
-        padding: 6px 14px;
-        border-radius: 9999px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-delete {
-        background: linear-gradient(90deg, #e50914, #b00610);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
-    }
-
-    .btn-delete:hover {
-        background: linear-gradient(90deg, #ff0f1f, #e50914);
-        box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
-        transform: translateY(-2px);
-    }
-
-    .btn-save {
-        background: linear-gradient(90deg, #2196f3, #1976d2);
-        color: #fff;
-        box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
-    }
-
-    .btn-save:hover {
-        background: linear-gradient(90deg, #42a5f5, #1e88e5);
-        box-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
-        transform: translateY(-2px);
-    }
-
-    .input-dark {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.15);
-        color: #fff;
-        border-radius: 6px;
-        padding: 8px 10px;
-        width: 100%;
-    }
-
-    .input-dark:focus {
-        outline: none;
-        border-color: #e50914;
-        box-shadow: 0 0 8px rgba(229, 9, 20, 0.5);
-    }
-
-    select {
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 6px;
-        padding: 4px 8px;
-    }
-
-    select:focus {
-        outline: none;
-        border-color: #e50914;
-    }
-
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fadeInUp {
-        animation: fadeInUp 0.8s ease forwards;
-    }
-</style>
-@endpush
-
 @section('content')
-<div class="min-h-screen px-8 py-10 fadeInUp">
+<div class="min-h-screen px-8 py-10 fadeInUp 
+            bg-gray-100 dark:bg-black 
+            text-gray-900 dark:text-white">
 
+    {{-- HEADER --}}
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-red-600 flex items-center gap-2">
-            <i class="bi bi-people-fill text-red-600"></i> Kelola Pengguna
+        <h1 class="text-3xl font-bold flex items-center gap-2 text-red-600 dark:text-red-500">
+            <i class="bi bi-people-fill"></i> Kelola Pengguna
         </h1>
-        <a href="{{ route('admin.dashboard') }}" class="add-btn bg-gray-700 hover:bg-gray-600">
+        <a href="{{ route('admin.dashboard') }}"
+           class="add-btn px-4 py-2 rounded-lg font-semibold
+                  bg-red-600 text-white
+                  hover:bg-red-700 transition">
             ← Kembali ke Dashboard
         </a>
     </div>
 
-    {{-- Notifikasi sukses --}}
+    {{-- ALERT --}}
     @if(session('success'))
-        <div class="bg-green-800 text-green-100 p-3 rounded mb-6 border border-green-500">
+        <div class="p-3 mb-6 rounded border
+                    bg-green-100 text-green-700
+                    dark:bg-green-900 dark:text-green-200 dark:border-green-600">
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- Form Tambah Pengguna --}}
-    <div class="table-container mb-10">
-        <h2 class="text-xl font-semibold mb-4 text-white flex items-center gap-2">
+    {{-- CARD FORM TAMBAH USER --}}
+    <div class="mb-10 p-6 rounded-xl shadow-lg border
+                bg-white/70 dark:bg-gray-900/60
+                backdrop-blur-md
+                border-gray-300 dark:border-gray-700">
+
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 
+                   text-gray-900 dark:text-white">
             ➕ Tambah Pengguna Baru
         </h2>
 
         <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-4">
             @csrf
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {{-- Nama --}}
                 <div>
-                    <label for="name" class="text-sm text-gray-300">Nama</label>
-                    <input type="text" name="name" id="name" required class="input-dark">
+                    <label class="text-sm text-gray-700 dark:text-gray-300">Nama</label>
+                    <input type="text" name="name" required
+                        class="w-full px-3 py-2 rounded-md
+                               bg-white dark:bg-gray-800
+                               border border-gray-300 dark:border-gray-700
+                               text-gray-900 dark:text-white
+                               focus:ring-2 focus:ring-red-600 focus:border-red-600">
                 </div>
+
+                {{-- Email --}}
                 <div>
-                    <label for="email" class="text-sm text-gray-300">Email</label>
-                    <input type="email" name="email" id="email" required class="input-dark">
+                    <label class="text-sm text-gray-700 dark:text-gray-300">Email</label>
+                    <input type="email" name="email" required
+                        class="w-full px-3 py-2 rounded-md
+                               bg-white dark:bg-gray-800
+                               border border-gray-300 dark:border-gray-700
+                               text-gray-900 dark:text-white
+                               focus:ring-2 focus:ring-red-600 focus:border-red-600">
                 </div>
+
+                {{-- Password --}}
                 <div>
-                    <label for="password" class="text-sm text-gray-300">Password</label>
-                    <input type="password" name="password" id="password" required class="input-dark">
+                    <label class="text-sm text-gray-700 dark:text-gray-300">Password</label>
+                    <input type="password" name="password" required
+                        class="w-full px-3 py-2 rounded-md
+                               bg-white dark:bg-gray-800
+                               border border-gray-300 dark:border-gray-700
+                               text-gray-900 dark:text-white
+                               focus:ring-2 focus:ring-red-600 focus:border-red-600">
                 </div>
+
+                {{-- Konfirmasi --}}
                 <div>
-                    <label for="password_confirmation" class="text-sm text-gray-300">Konfirmasi Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" required class="input-dark">
+                    <label class="text-sm text-gray-700 dark:text-gray-300">Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" required
+                        class="w-full px-3 py-2 rounded-md
+                               bg-white dark:bg-gray-800
+                               border border-gray-300 dark:border-gray-700
+                               text-gray-900 dark:text-white
+                               focus:ring-2 focus:ring-red-600 focus:border-red-600">
                 </div>
+
+                {{-- Checkbox Admin --}}
                 <div class="md:col-span-2 flex items-center">
-                    <input type="checkbox" name="is_admin" value="1" class="mr-2 accent-red-600">
-                    <span class="text-sm text-gray-300">Admin</span>
+                    <input type="checkbox" name="is_admin" value="1"
+                           class="mr-2 accent-red-600 dark:accent-red-500">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Admin</span>
                 </div>
+
             </div>
 
-            <button type="submit" class="btn-save mt-2">Tambah Pengguna</button>
+            {{-- Tombol Simpan --}}
+            <button type="submit"
+                class="mt-2 px-5 py-2 rounded-md font-semibold
+                       bg-blue-600 text-white
+                       hover:bg-blue-700 transition shadow-md">
+                Tambah Pengguna
+            </button>
         </form>
     </div>
 
-    {{-- Daftar Pengguna --}}
-    <div class="table-container overflow-x-auto">
-        <h2 class="text-xl font-semibold mb-4 text-white">Daftar Pengguna</h2>
+    {{-- TABLE USER --}}
+    <div class="rounded-xl shadow-lg border overflow-x-auto
+                bg-white/70 dark:bg-gray-900/60
+                backdrop-blur-md
+                border-gray-300 dark:border-gray-700">
 
-        <table>
-            <thead>
-                <tr class="text-sm uppercase tracking-wider">
-                    <th>ID</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Dibuat</th>
-                    <th>Aksi</th>
+        <h2 class="text-xl font-semibold mb-4 p-6 pb-2
+                   text-gray-900 dark:text-white">Daftar Pengguna</h2>
+
+        <table class="w-full border-collapse">
+            <thead class="bg-red-100 dark:bg-red-900/40">
+                <tr class="text-sm uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                    <th class="px-4 py-3 text-left">ID</th>
+                    <th class="px-4 py-3 text-left">Nama</th>
+                    <th class="px-4 py-3 text-left">Email</th>
+                    <th class="px-4 py-3 text-left">Role</th>
+                    <th class="px-4 py-3 text-left">Dibuat</th>
+                    <th class="px-4 py-3 text-left">Aksi</th>
                 </tr>
             </thead>
+
             <tbody>
                 @forelse($users as $user)
-                    <tr>
-                        <td>{{ $user->id }}</td>
-                        <td class="font-semibold text-white">{{ $user->name }}</td>
-                        <td class="text-gray-300">{{ $user->email }}</td>
-                        <td>
+                    <tr class="border-t border-gray-200 dark:border-gray-700
+                               hover:bg-red-50 dark:hover:bg-red-900/30 transition">
+
+                        <td class="px-4 py-3">{{ $user->id }}</td>
+                        <td class="px-4 py-3 font-semibold">{{ $user->name }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $user->email }}</td>
+
+                        <td class="px-4 py-3">
                             <form method="POST" action="{{ route('admin.users.updateRole', $user) }}">
-                                @csrf
-                                @method('PUT')
-                                <select name="role" onchange="this.form.submit()">
-                                    <option value="user" {{ !$user->is_admin ? 'selected' : '' }}>User</option>
-                                    <option value="admin" {{ $user->is_admin ? 'selected' : '' }}>Admin</option>
+                                @csrf @method('PUT')
+                                <select name="role" onchange="this.form.submit()"
+                                    class="rounded px-2 py-1
+                                           bg-gray-200 dark:bg-gray-800
+                                           text-gray-800 dark:text-gray-200
+                                           border border-gray-300 dark:border-gray-700">
+                                    <option value="user" {{ !$user->is_admin ? 'selected' : '' }}>
+                                        User
+                                    </option>
+                                    <option value="admin" {{ $user->is_admin ? 'selected' : '' }}>
+                                        Admin
+                                    </option>
                                 </select>
                             </form>
                         </td>
-                        <td class="text-gray-400">{{ optional($user->created_at)->format('d M Y') }}</td>
-                        <td>
+
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                            {{ optional($user->created_at)->format('d M Y') }}
+                        </td>
+
+                        <td class="px-4 py-3">
                             @if($user->id !== auth()->id())
-                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Yakin hapus pengguna ini?')" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="action-btn btn-delete">Hapus</button>
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
+                                      onsubmit="return confirm('Yakin hapus pengguna ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit"
+                                        class="px-4 py-2 rounded-full font-semibold text-sm
+                                               bg-red-600 hover:bg-red-700
+                                               text-white transition">
+                                        Hapus
+                                    </button>
                                 </form>
                             @else
-                                <span class="text-gray-500 text-sm italic">Tidak bisa hapus diri sendiri</span>
+                                <span class="text-gray-500 text-sm italic">
+                                    Tidak bisa hapus diri sendiri
+                                </span>
                             @endif
                         </td>
+
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-8">Belum ada pengguna terdaftar.</td>
+                        <td colspan="6"
+                            class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            Belum ada pengguna terdaftar.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
 
-        {{-- Pagination --}}
-        <div class="mt-6">
+        <div class="p-6">
             {{ $users instanceof \Illuminate\Pagination\LengthAwarePaginator ? $users->links() : '' }}
         </div>
     </div>

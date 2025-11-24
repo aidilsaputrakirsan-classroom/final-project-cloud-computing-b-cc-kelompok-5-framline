@@ -3,7 +3,7 @@
 @section('title', 'Genre - Netflix Style')
 
 @section('content')
-<div class="min-h-screen bg-black text-white flex flex-col items-center justify-start pt-24 pb-16 font-sans">
+<div class="min-h-screen bg-white text-black dark:bg-black dark:text-white flex flex-col items-center justify-start pt-24 pb-16 font-sans">
     <h1 class="text-4xl font-extrabold text-red-600 mb-8 tracking-wide drop-shadow-[0_0_25px_#dc2626]">🎬 Genre Film</h1>
 
     {{-- Tombol Tambah Genre untuk Admin --}}
@@ -17,7 +17,12 @@
     {{-- Grid Card Genre --}}
     <div id="genre-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-11/12">
         @foreach($genres->take(5) as $genre)
-            <div class="relative group rounded-xl overflow-hidden shadow-lg transition transform hover:scale-105 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]">
+            <div class="relative 
+            bg-gray-200 text-white 
+            dark:bg-gray-800 dark:text-red-500 
+            group rounded-xl overflow-hidden shadow-lg 
+            transition transform hover:scale-105 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]">
+
                 @if($genre->image)
                     <img src="{{ asset('storage/' . $genre->image) }}" alt="{{ $genre->name }}"
                          class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition duration-300">
@@ -28,7 +33,9 @@
                 @endif
 
                 {{-- Overlay --}}
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col justify-end p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent 
+                flex flex-col justify-end p-4 
+                transition-opacity duration-300 opacity-100">
                     <h2 class="text-2xl font-bold mb-2 text-red-500 drop-shadow-[0_0_10px_#dc2626]">{{ $genre->name }}</h2>
                     <p class="text-sm text-gray-300 mb-4">{{ $genre->description ?? 'Tidak ada deskripsi' }}</p>
 
