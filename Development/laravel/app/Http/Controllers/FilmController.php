@@ -6,6 +6,7 @@ use App\Models\Film;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\AuditLog;
 
 class FilmController extends Controller
 {
@@ -45,6 +46,15 @@ class FilmController extends Controller
                 ->syncWithoutDetaching([
                     $film->id => ['watched_at' => now()]
                 ]);
+
+            // log open film detail
+            AuditLog::create([
+                'user_id' => auth()->user()->id,
+                'film_id' => $film->id,
+                'action' => 'open_film_detail',
+                'performed_at' => now(),
+                'meta' => null,
+            ]);
         }
 
         return view('films.show', compact('film'));
@@ -65,6 +75,15 @@ class FilmController extends Controller
         if ($user->favoriteFilms()->where('film_id', $film->id)->exists()) {
             $user->favoriteFilms()->detach($film->id);
 
+            // log remove favorite
+            AuditLog::create([
+                'user_id' => $user->id,
+                'film_id' => $film->id,
+                'action' => 'remove_favorite',
+                'performed_at' => now(),
+                'meta' => null,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'favorited' => false,
@@ -73,6 +92,15 @@ class FilmController extends Controller
         }
 
         $user->favoriteFilms()->attach($film->id);
+
+        // log add favorite
+        AuditLog::create([
+            'user_id' => $user->id,
+            'film_id' => $film->id,
+            'action' => 'add_favorite',
+            'performed_at' => now(),
+            'meta' => null,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -106,7 +134,7 @@ class FilmController extends Controller
             'aktor' => 'required|string',
             'durasi' => 'required|string|max:50',
             'genre_id' => 'required|exists:genres,id',
-            'trailer_url' => 'nullable|url',   // ← DITAMBAH
+            'trailer_url' => 'nullable|url',
         ]);
 
         $poster = $request->hasFile('poster')
@@ -122,7 +150,7 @@ class FilmController extends Controller
             'aktor' => $request->aktor,
             'durasi' => $request->durasi,
             'genre_id' => $request->genre_id,
-            'trailer_url' => $request->trailer_url,  // ← DITAMBAH
+            'trailer_url' => $request->trailer_url,
             'user_id' => auth()->id(),
         ]);
 
@@ -149,7 +177,7 @@ class FilmController extends Controller
             'aktor' => 'required|string',
             'durasi' => 'required|string|max:50',
             'genre_id' => 'required|exists:genres,id',
-            'trailer_url' => 'nullable|url',   // ← DITAMBAH
+            'trailer_url' => 'nullable|url',
         ]);
 
         if ($request->hasFile('poster')) {
@@ -168,7 +196,7 @@ class FilmController extends Controller
             'aktor' => $request->aktor,
             'durasi' => $request->durasi,
             'genre_id' => $request->genre_id,
-            'trailer_url' => $request->trailer_url,  // ← DITAMBAH
+            'trailer_url' => $request->trailer_url,
         ]);
 
         return redirect()->route('admin.films.index')
@@ -184,6 +212,7 @@ class FilmController extends Controller
         $film->delete();
 
         return redirect()->route('admin.films.index')
+
             ->with('success', 'Film berhasil dihapus!');
     }
 }

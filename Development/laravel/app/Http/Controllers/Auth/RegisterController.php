@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
+use App\Models\AuditLog;
+
 class RegisterController extends Controller
 {
     /*
@@ -38,6 +40,22 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function registered($request, $user)
+    {
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'register',
+            'performed_at' => now(),
+        ]);
     }
 
     /**

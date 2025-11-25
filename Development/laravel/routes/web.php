@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminDashboardController;
+
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\GenreController;
-use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LandingController;
@@ -87,9 +88,12 @@ Route::middleware(['auth', 'is_admin'])
         // Kelola genre
         Route::resource('/genres', GenreController::class);
 
-        // Kelola user
-        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
-        Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
-        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
-        Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
+    // Kelola user
+    Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
+    Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
+    Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
+
+    // Activity logs
+    Route::get('/activity-logs', [AdminDashboardController::class, 'activityLogs'])->name('activity_logs');
     });
