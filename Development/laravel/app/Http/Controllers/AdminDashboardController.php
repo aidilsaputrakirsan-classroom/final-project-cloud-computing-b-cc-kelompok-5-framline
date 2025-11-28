@@ -78,6 +78,8 @@ class AdminDashboardController extends Controller
             ->orderBy('performed_at', 'desc')
             ->paginate(20);
 
-        return view('admin.activity_logs', compact('logs'));
+        return view('admin.activity_logs', [
+            'logs' => $logs,
+        ]);
     }
 }

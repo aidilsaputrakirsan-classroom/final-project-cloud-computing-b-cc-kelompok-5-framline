@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminDashboardController;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\HomeController;
@@ -27,22 +28,64 @@ Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show')
 // Jika user belum login menekan “Tambah Favorit”
 Route::get('/login-required', function () {
     return response()->json([
-        'status' => 'need_login',
-        'message' => 'Anda harus login terlebih dahulu untuk menambahkan film ke favorit.'
+        'status'  => 'need_login',
+        'message' => 'Anda harus login terlebih dahulu untuk menambahkan film ke favorit.',
     ]);
 })->name('login.required');
 
-
 /*
 |--------------------------------------------------------------------------
-| 🔐 Authentication Routes
+| 🔐 Authentication Routes (GET + POST)
 |--------------------------------------------------------------------------
 */
-Auth::routes();
+
+// Tampilkan form login
+Route::get('/login', function () {
+    return view('auth.login'); // pastikan view ini ada
+})->name('login');
+
+// Proses login (form method="POST" action="{{ route('login') }}")
+Route::post('/login', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended(route('home'));
+    }
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.',
+    ])->onlyInput('email');
+});
+
+// Tampilkan form register
+Route::get('/register', function () {
+    return view('auth.register'); // pastikan view ini ada
+})->name('register');
+
+// (Opsional) proses register sederhana – silakan sesuaikan sendiri
+Route::post('/register', function (Request $request) {
+    // Di sini biasanya: validasi, buat user, lalu login / redirect
+    // Sementara cukup redirect balik ke login
+    return redirect()->route('login');
+});
+
+// Lupa password (hanya form, tanpa logic kirim email)
+Route::get('/forgot-password', function () {
+    return view('auth.passwords.email'); // sesuaikan nama view
+})->name('password.request');
+
+// Logout
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('landing');
+})->name('logout');
 
 // Setelah login → home/user dashboard
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +111,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('films.favorite');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | 🧑‍💼 Admin Routes
@@ -88,12 +130,12 @@ Route::middleware(['auth', 'is_admin'])
         // Kelola genre
         Route::resource('/genres', GenreController::class);
 
-    // Kelola user
-    Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
-    Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
-    Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
-    Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
+        // Kelola user
+        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users.index');
+        Route::post('/users', [AdminDashboardController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}/role', [AdminDashboardController::class, 'updateRole'])->name('users.updateRole');
+        Route::delete('/users/{user}', [AdminDashboardController::class, 'destroyUser'])->name('users.destroy');
 
-    // Activity logs
-    Route::get('/activity-logs', [AdminDashboardController::class, 'activityLogs'])->name('activity_logs');
+        // Activity logs
+        Route::get('/activity-logs', [AdminDashboardController::class, 'activityLogs'])->name('activity_logs');
     });
