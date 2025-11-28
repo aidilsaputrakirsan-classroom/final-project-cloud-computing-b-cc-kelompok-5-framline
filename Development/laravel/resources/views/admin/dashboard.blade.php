@@ -60,6 +60,14 @@
             </div>
             <i class="bi bi-people"></i>
         </a>
+
+        <a href="{{ route('admin.activity_logs') }}" class="menu-card flex items-center justify-between">
+            <div>
+                <h3>Log Aktivitas Pengguna</h3>
+                <p>Lihat aktivitas login, logout, dan aksi pengguna lainnya</p>
+            </div>
+            <i class="bi bi-clock-history"></i>
+        </a>
     </div>
 </div>
 @endsection

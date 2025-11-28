@@ -70,4 +70,16 @@ class AdminDashboardController extends Controller
         $user->delete();
         return redirect()->back()->with('success', 'Pengguna berhasil dihapus!');
     }
+
+    // Activity logs listing for admin dashboard
+    public function activityLogs()
+    {
+        $logs = \App\Models\AuditLog::with(['user', 'film'])
+            ->orderBy('performed_at', 'desc')
+            ->paginate(20);
+
+        return view('admin.activity_logs', [
+            'logs' => $logs,
+        ]);
+    }
 }
