@@ -10,8 +10,9 @@ class Genre extends Model
 
     protected $table = 'genres';
 
+    // SATU genre punya banyak film
     public function films()
     {
-        return $this->belongsToMany(Film::class, 'film_genre');
+        return $this->hasMany(Film::class, 'genre_id');
     }
 }

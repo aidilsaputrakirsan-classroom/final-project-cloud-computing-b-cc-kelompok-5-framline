@@ -4,7 +4,7 @@
 
 @push('styles')
 <!-- Tailwind & Fonts -->
-<script src="https://cdn.tailwindcss.com"></script>
+<!-- <script src="https://cdn.tailwindcss.com"></script> -->
 <script>
   tailwind.config = {
     theme: {
@@ -161,9 +161,8 @@
              class="w-full h-56 object-cover">
 
         <div class="p-4">
-          <h3 class="font-semibold text-lg">{{ $film->judul }}</h3>
-          <p class="text-sm text-gray-400">{{ $film->genre->name ?? 'Unknown' }} | {{ $film->tahun_rilis }}</p>
-        </div>
+         <h3 class="font-semibold text-lg">{{ $film->judul }}</h3>
+          </div>
       </div>
     @endforeach
   </div>

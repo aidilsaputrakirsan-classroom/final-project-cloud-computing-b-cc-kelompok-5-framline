@@ -36,7 +36,7 @@
 <div class="px-8 md:px-16 pb-20">
     <h2 class="text-2xl font-semibold mb-8 border-l-4 border-red-600 pl-3">Manage Content</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <a href="{{ route('admin.films.index') }}" class="menu-card flex items-center justify-between">
             <div>
                 <h3>Kelola Film</h3>
@@ -59,6 +59,14 @@
                 <p>Atur hak akses user dan admin</p>
             </div>
             <i class="bi bi-people"></i>
+        </a>
+
+        <a href="{{ route('admin.activity_logs') }}" class="menu-card flex items-center justify-between">
+            <div>
+                <h3>Log Aktivitas Pengguna</h3>
+                <p>Lihat aktivitas login, logout, dan aksi pengguna lainnya</p>
+            </div>
+            <i class="bi bi-clock-history"></i>
         </a>
     </div>
 </div>

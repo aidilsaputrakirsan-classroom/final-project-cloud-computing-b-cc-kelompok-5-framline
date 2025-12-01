@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Models\AuditLog;
 
 class LoginController extends Controller
 {
@@ -39,14 +40,37 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-protected function authenticated($request, $user)
-{
-    if ($user->isAdmin()) {
-        return redirect('/admin/dashboard');
+    protected function authenticated($request, $user)
+    {
+        // Log login action
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'login',
+            'performed_at' => now(),
+        ]);
+
+        if ($user->isAdmin()) {
+            return redirect('/admin/dashboard');
+        }
+
+        return redirect('/home');
     }
 
-    return redirect('/home');
-}
+    public function logout(Request $request)
+    {
+        // Log logout action before logout
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action' => 'logout',
+            'performed_at' => now(),
+        ]);
 
+        $this->guard()->logout();
 
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 }
