@@ -31,7 +31,7 @@ class Film extends Model
     // Genre film
     public function genre()
     {
-        return $this->belongsTo(Genre::class);
+        return $this->belongsTo(Genre::class, 'genre_id');
     }
 
     // User yang mengupload film

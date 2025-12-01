@@ -140,23 +140,15 @@
       {{-- Genre --}}
       <div>
         <label class="block text-gray-700 dark:text-gray-200 font-semibold mb-2">Genre</label>
-        <div class="flex items-center space-x-3">
-          <select name="genre_id" id="genre-select"
-                  class="block w-full border @error('genre_id') border-red-600 @enderror border-red-500/40 dark:border-red-800/60 rounded-lg
-                  bg-white dark:bg-[#0d0d0d]
-                  text-gray-900 dark:text-gray-200 p-3" required>
-            <option value="">-- Pilih Genre --</option>
-            @foreach ($genres as $genre)
-              <option value="{{ $genre->id }}">{{ $genre->name }}</option>
-            @endforeach
-          </select>
-
-          <button type="button" onclick="openGenreModal()"
-                  class="bg-red-600 hover:bg-red-700 px-4 py-3 rounded-lg font-semibold text-white
-                  shadow-[0_0_15px_rgba(220,38,38,0.5)]">
-            + Genre
-          </button>
-        </div>
+        <select name="genre_id" id="genre-select"
+                class="block w-full border @error('genre_id') border-red-600 @enderror border-red-500/40 dark:border-red-800/60 rounded-lg
+                bg-white dark:bg-[#0d0d0d]
+                text-gray-900 dark:text-gray-200 p-3" required>
+          <option value="">-- Pilih Genre --</option>
+          @foreach ($genres as $genre)
+            <option value="{{ $genre->id }}">{{ $genre->name }}</option>
+          @endforeach
+        </select>
         @error('genre_id')
           <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
         @enderror
@@ -171,76 +163,5 @@
       </div>
     </form>
   </div>
-
-  {{-- MODAL --}}
-  <div id="genre-modal"
-       class="fixed inset-0 bg-white/80 dark:bg-black/90 backdrop-blur-sm flex justify-center items-center hidden z-50">
-    <div class="bg-white dark:bg-[#0d0d0d] p-8 rounded-2xl
-        border border-red-500/40 dark:border-red-700/60 w-96">
-      <h3 class="text-2xl font-semibold text-red-600 mb-4 text-center">Tambah Genre Baru</h3>
-
-      <form id="genre-form" class="space-y-5">
-        @csrf
-        <div>
-          <label class="block text-gray-700 dark:text-gray-200 mb-2">Nama Genre</label>
-          <input type="text" id="genre-name"
-                 class="w-full p-3 bg-gray-100 dark:bg-[#101010]
-                 border border-red-500/40 dark:border-red-800/60
-                 rounded-lg text-gray-900 dark:text-gray-200" required>
-        </div>
-
-        <div class="flex justify-end space-x-4">
-          <button type="button" onclick="closeGenreModal()"
-                  class="px-5 py-2 bg-gray-300 dark:bg-gray-700
-                  hover:bg-gray-400 dark:hover:bg-gray-800
-                  rounded-lg text-gray-900 dark:text-white">
-            Batal
-          </button>
-          <button type="submit"
-                  class="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold text-white">
-            Simpan
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
-
-<script>
-function openGenreModal() {
-  document.getElementById('genre-modal').classList.remove('hidden');
-}
-function closeGenreModal() {
-  document.getElementById('genre-modal').classList.add('hidden');
-  document.getElementById('genre-name').value = '';
-}
-
-document.getElementById('genre-form').addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  fetch('{{ route('admin.genres.store') }}', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-      },
-      body: JSON.stringify({ name: document.getElementById('genre-name').value })
-  })
-  .then(res => res.json())
-  .then(data => {
-      if (data.success) {
-          let select = document.getElementById('genre-select');
-          let option = document.createElement('option');
-          option.value = data.genre.id;
-          option.textContent = data.genre.name;
-          select.appendChild(option);
-          select.value = data.genre.id;
-          closeGenreModal();
-      } else {
-          alert('Gagal menambahkan genre');
-      }
-  });
-});
-</script>
-
 @endsection
