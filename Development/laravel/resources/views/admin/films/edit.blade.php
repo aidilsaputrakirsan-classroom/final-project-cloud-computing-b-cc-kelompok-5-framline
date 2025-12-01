@@ -112,25 +112,19 @@
 
       {{-- Genre --}}
       <div>
-        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-200">Genre</label>
-        <div class="flex items-center space-x-3">
-          <select name="genre_id" id="genre-select"
-                  class="block w-full border border-red-800/60 rounded-lg
-                         bg-white dark:bg-[#0d0d0d]
-                         text-black dark:text-white
-                         p-3 focus:ring-2 focus:ring-red-600 transition" required>
-            @foreach ($genres as $genre)
-              <option value="{{ $genre->id }}" {{ $film->genre_id == $genre->id ? 'selected' : '' }}>
-                {{ $genre->name }}
-              </option>
-            @endforeach
-          </select>
-
-          <button type="button" onclick="openGenreModal()"
-                  class="bg-red-700 hover:bg-red-800 px-4 py-3 rounded-lg font-semibold text-white shadow-[0_0_20px_rgba(220,38,38,0.6)]">
-            + Tambah Genre
-          </button>
-        </div>
+        <label class="block text-gray-700 dark:text-gray-200 font-semibold mb-2">Genre</label>
+        <select name="genre_id" id="genre-select"
+                class="block w-full border @error('genre_id') border-red-600 @enderror border-red-500/40 dark:border-red-800/60 rounded-lg
+                bg-white dark:bg-[#0d0d0d]
+                text-gray-900 dark:text-gray-200 p-3" required>
+          <option value="">-- Pilih Genre --</option>
+          @foreach ($genres as $genre)
+            <option value="{{ $genre->id }}">{{ $genre->name }}</option>
+          @endforeach
+        </select>
+        @error('genre_id')
+          <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+        @enderror
       </div>
 
       {{-- Tombol Update --}}
@@ -144,52 +138,4 @@
     </form>
   </div>
 </div>
-
-{{-- Modal Genre --}}
-<div id="genre-modal" 
-     class="fixed inset-0 bg-white/90 dark:bg-black/90 backdrop-blur-sm 
-            flex justify-center items-center hidden z-50">
-  <div class="bg-white dark:bg-[#0d0d0d] 
-              p-8 rounded-2xl border border-red-700/60 w-96 
-              shadow-[0_0_35px_rgba(220,38,38,0.5)]">
-    <h3 class="text-2xl font-semibold text-red-600 mb-4 text-center">Tambah Genre Baru</h3>
-
-    <form id="genre-form" class="space-y-5">
-      @csrf
-
-      <div>
-        <label class="block mb-2 text-gray-700 dark:text-gray-200">Nama Genre</label>
-        <input type="text" id="genre-name"
-               class="w-full p-3 border border-red-800/60 rounded-lg
-                      bg-white dark:bg-[#0d0d0d]
-                      text-black dark:text-white
-                      focus:ring-2 focus:ring-red-600" required>
-      </div>
-
-      <div class="flex justify-end space-x-4">
-        <button type="button" onclick="closeGenreModal()"
-                class="px-5 py-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-800
-                       rounded-lg text-black dark:text-white">
-          Batal
-        </button>
-
-        <button type="submit"
-                class="px-5 py-2 bg-red-700 hover:bg-red-800 rounded-lg font-semibold text-white shadow-[0_0_20px_rgba(220,38,38,0.5)]">
-          Simpan
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script>
-function openGenreModal() {
-  document.getElementById('genre-modal').classList.remove('hidden');
-  document.getElementById('genre-name').focus();
-}
-function closeGenreModal() {
-  document.getElementById('genre-modal').classList.add('hidden');
-  document.getElementById('genre-name').value = '';
-}
-</script>
 @endsection
