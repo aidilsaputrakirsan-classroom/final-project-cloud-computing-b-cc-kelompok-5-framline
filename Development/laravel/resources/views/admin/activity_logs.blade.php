@@ -6,6 +6,15 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <div class="mb-6">
+        <div class="flex items-center justify-between gap-4 mb-4">
+            <a href="{{ route('admin.dashboard') }}"
+               class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2 text-sm font-semibold
+                      text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2
+                      focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                ← Kembali ke Dashboard
+            </a>
+        </div>
+
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
             Log Aktivitas Pengguna
         </h1>
@@ -86,20 +95,38 @@
                                     <span class="font-semibold">
                                         {{ $filmTitle ?? '(unknown film)' }}
                                     </span>
+                                @elseif ($log->action === 'create_film')
+                                    Created new film:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['film_title'] ?? '(unknown film)' }}
+                                    </span>
+                                @elseif ($log->action === 'update_film')
+                                    Updated film:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['film_title'] ?? '(unknown film)' }}
+                                    </span>
+                                @elseif ($log->action === 'delete_film')
+                                    Deleted film:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['film_title'] ?? '(unknown film)' }}
+                                    </span>
+                                @elseif ($log->action === 'create_genre')
+                                    Created new genre:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['genre_name'] ?? '(unknown genre)' }}
+                                    </span>
+                                @elseif ($log->action === 'update_genre')
+                                    Updated genre:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['genre_name'] ?? '(unknown genre)' }}
+                                    </span>
+                                @elseif ($log->action === 'delete_genre')
+                                    Deleted genre:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['genre_name'] ?? '(unknown genre)' }}
+                                    </span>
                                 @else
                                     -
-                                @endif
-
-                                @if ($log->meta)
-                                    <details class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        <summary class="cursor-pointer hover:underline">
-                                            Lihat JSON meta
-                                        </summary>
-                                        <pre class="mt-1 whitespace-pre-wrap break-words rounded border border-gray-200 bg-gray-50 p-2 text-[11px] text-gray-700
-                                                    dark:border-gray-700 dark:bg-gray-950 dark:text-gray-200">
-{{ json_encode($log->meta, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE) }}
-                                        </pre>
-                                    </details>
                                 @endif
                             </td>
                         </tr>

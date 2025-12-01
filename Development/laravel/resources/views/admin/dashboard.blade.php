@@ -36,7 +36,7 @@
 <div class="px-8 md:px-16 pb-20">
     <h2 class="text-2xl font-semibold mb-8 border-l-4 border-red-600 pl-3">Manage Content</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <a href="{{ route('admin.films.index') }}" class="menu-card flex items-center justify-between">
             <div>
                 <h3>Kelola Film</h3>

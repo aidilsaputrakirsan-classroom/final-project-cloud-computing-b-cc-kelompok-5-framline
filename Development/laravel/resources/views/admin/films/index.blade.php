@@ -4,23 +4,34 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     {{-- Header --}}
-    <div class="mb-6 flex items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                🎬Kelola Film
-            </h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Tambah, ubah, dan hapus data film yang tampil di aplikasi.
-            </p>
+    <div class="mb-6">
+        <div class="flex items-center justify-between gap-4 mb-4">
+            <a href="{{ route('admin.dashboard') }}"
+               class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2 text-sm font-semibold
+                      text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2
+                      focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                ← Kembali ke Dashboard
+            </a>
         </div>
 
-        <a href="{{ route('admin.films.create') }}"
-           class="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold
-                  text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2
-                  focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
-            <span class="text-lg leading-none">＋</span>
-            <span>Tambah Film</span>
-        </a>
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    🎬Kelola Film
+                </h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Tambah, ubah, dan hapus data film yang tampil di aplikasi.
+                </p>
+            </div>
+
+            <a href="{{ route('admin.films.create') }}"
+               class="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold
+                      text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2
+                      focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                <span class="text-lg leading-none">＋</span>
+                <span>Tambah Film</span>
+            </a>
+        </div>
     </div>
 
     {{-- Flash message --}}

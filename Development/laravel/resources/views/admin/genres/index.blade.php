@@ -4,6 +4,15 @@
 
 @section('content')
 <div class="min-h-screen bg-white text-black dark:bg-black dark:text-white flex flex-col items-center justify-start pt-24 pb-16 font-sans">
+    <div class="mb-6 w-11/12">
+        <a href="{{ route('admin.dashboard') }}"
+           class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2 text-sm font-semibold
+                  text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2
+                  focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+            ← Kembali ke Dashboard
+        </a>
+    </div>
+
     <h1 class="text-4xl font-extrabold text-red-600 mb-8 tracking-wide drop-shadow-[0_0_25px_#dc2626]">🎬 Genre Film</h1>
 
     {{-- Tombol Tambah Genre untuk Admin --}}
@@ -17,10 +26,10 @@
     {{-- Grid Card Genre --}}
     <div id="genre-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-11/12">
         @foreach($genres->take(5) as $genre)
-            <div class="relative 
-            bg-gray-200 text-white 
-            dark:bg-gray-800 dark:text-red-500 
-            group rounded-xl overflow-hidden shadow-lg 
+            <div class="relative
+            bg-gray-200 text-white
+            dark:bg-gray-800 dark:text-red-500
+            group rounded-xl overflow-hidden shadow-lg
             transition transform hover:scale-105 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]">
 
                 @if($genre->image)
@@ -33,8 +42,8 @@
                 @endif
 
                 {{-- Overlay --}}
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent 
-                flex flex-col justify-end p-4 
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent
+                flex flex-col justify-end p-4
                 transition-opacity duration-300 opacity-100">
                     <h2 class="text-2xl font-bold mb-2 text-red-500 drop-shadow-[0_0_10px_#dc2626]">{{ $genre->name }}</h2>
                     <p class="text-sm text-gray-300 mb-4">{{ $genre->description ?? 'Tidak ada deskripsi' }}</p>
