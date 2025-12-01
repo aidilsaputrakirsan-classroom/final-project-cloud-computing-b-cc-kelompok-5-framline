@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\AuditLog;
 
 class GenreController extends Controller
 {
@@ -43,6 +44,18 @@ class GenreController extends Controller
             'image' => $imagePath
         ]);
 
+        // log genre creation
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'genre_id' => $genre->id,
+            'action' => 'create_genre',
+            'performed_at' => now(),
+            'meta' => [
+                'genre_name' => $request->name,
+                'description' => $request->description,
+            ],
+        ]);
+
         // Jika request AJAX, return JSON response
         if ($request->expectsJson()) {
             return response()->json([
@@ -77,11 +90,38 @@ class GenreController extends Controller
         $genre->description = $request->description;
         $genre->save();
 
+        // log genre update
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'genre_id' => $genre->id,
+            'action' => 'update_genre',
+            'performed_at' => now(),
+            'meta' => [
+                'genre_name' => $request->name,
+                'changes' => [
+                    'name' => $request->name,
+                    'description' => $request->description,
+                ],
+            ],
+        ]);
+
         return redirect()->route('admin.genres.index')->with('success','Genre diperbarui');
     }
 
     public function destroy(Genre $genre)
     {
+        // log genre deletion before deleting
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'genre_id' => $genre->id,
+            'action' => 'delete_genre',
+            'performed_at' => now(),
+            'meta' => [
+                'genre_name' => $genre->name,
+                'description' => $genre->description,
+            ],
+        ]);
+
         if ($genre->image) Storage::disk('public')->delete($genre->image);
         $genre->delete();
         return redirect()->route('admin.genres.index')->with('success','Genre dihapus');
