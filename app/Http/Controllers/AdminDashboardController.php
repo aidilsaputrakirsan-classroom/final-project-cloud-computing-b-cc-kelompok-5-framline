@@ -41,11 +41,22 @@ class AdminDashboardController extends Controller
             'is_admin' => 'boolean',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_admin' => $request->boolean('is_admin', false),
+        ]);
+
+        // Log the action
+        \App\Models\AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'add_user',
+            'performed_at' => now(),
+            'meta' => [
+                'added_user_name' => $user->name,
+                'added_user_email' => $user->email,
+            ],
         ]);
 
         return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan!');
@@ -67,6 +78,17 @@ class AdminDashboardController extends Controller
     // (Opsional) hapus pengguna
     public function destroyUser(User $user)
     {
+        // Log the action before deleting
+        \App\Models\AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'delete_user',
+            'performed_at' => now(),
+            'meta' => [
+                'deleted_user_name' => $user->name,
+                'deleted_user_email' => $user->email,
+            ],
+        ]);
+
         $user->delete();
         return redirect()->back()->with('success', 'Pengguna berhasil dihapus!');
     }

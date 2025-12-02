@@ -153,8 +153,6 @@
             @enderror
 
             <button type="submit" class="btn-login mt-2">Login</button>
-
-            <a href="{{ route('password.request') }}" class="forgot-pin">Lupa PIN?</a>
         </form>
     </div>
 
