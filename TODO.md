@@ -1,0 +1,3 @@
+- [x] Fix validation for 'tahun_rilis' in FilmController update method (change from integer to date)
+- [x] Fix validation for 'durasi' in FilmController update method (change to integer with min/max)
+- [x] Add selected attribute to genre select option in edit.blade.php to pre-select current genre

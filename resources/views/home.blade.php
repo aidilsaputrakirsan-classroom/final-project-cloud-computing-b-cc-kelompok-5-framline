@@ -87,6 +87,10 @@
     .search-bar button:hover {
         background: #ff141f;
     }
+
+    .hidden-genre {
+        display: none;
+    }
 </style>
 @endpush
 
@@ -115,13 +119,13 @@
 <section class="px-8 md:px-16 py-16 bg-dark">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-semibold">Browse by Genre</h2>
-        <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
+        <button id="see-all-genres" class="text-netflix hover:underline">See All →</button>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
         @foreach ($genres as $genre)
             <button onclick="window.location.href='{{ route('films.index', ['genre' => $genre->name]) }}'"
-                    class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition">
+                    class="bg-slate-800/70 hover:bg-netflix/20 border border-slate-700 hover:border-netflix py-3 rounded-xl transition {{ $loop->index >= 5 ? 'hidden-genre' : '' }}">
 
                 @if($genre->image)
                     <img src="{{ asset('storage/' . $genre->image) }}"
@@ -137,7 +141,7 @@
 <!-- 🎥 NOW PLAYING -->
 <section class="px-8 md:px-16 pb-20 bg-dark">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold">Now Playing</h2>
+        <h2 class="text-2xl font-semibold">Daftar Film</h2>
         <a href="{{ route('films.index') }}" class="text-netflix hover:underline">See All →</a>
     </div>
 
@@ -157,6 +161,21 @@
         @endforeach
     </div>
 </section>
+
+<script>
+    document.getElementById('see-all-genres').addEventListener('click', function() {
+        const hiddenGenres = document.querySelectorAll('.hidden-genre');
+        const isExpanded = this.textContent.includes('See Less');
+
+        if (isExpanded) {
+            hiddenGenres.forEach(genre => genre.style.display = 'none');
+            this.innerHTML = 'See All →';
+        } else {
+            hiddenGenres.forEach(genre => genre.style.display = 'block');
+            this.innerHTML = 'See Less →';
+        }
+    });
+</script>
 
 </body>
 @endsection
