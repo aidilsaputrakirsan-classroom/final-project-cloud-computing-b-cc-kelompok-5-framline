@@ -4,7 +4,6 @@
 
 @push('styles')
 <!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -28,8 +27,6 @@
 
 <style>
   body {
-    background: radial-gradient(circle at top, #141414 0%, #000 100%);
-    color: white;
     font-family: 'Poppins', sans-serif;
   }
 
@@ -99,7 +96,7 @@
 @section('content')
 
 <!-- 🎬 HERO -->
-<section class="hero-bg">
+<section class="hero-bg bg-black text-white">
   <h1 class="text-5xl md:text-6xl font-bold mb-4">
     Feel the <span class="text-netflix">Movies</span> Beyond
   </h1>

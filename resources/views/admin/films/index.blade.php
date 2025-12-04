@@ -46,9 +46,11 @@
         <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800
                     dark:border-red-800 dark:bg-red-900/40 dark:text-red-100">
             {{ session('error') }}
+        </div>
+    @endif
 
     {{-- Table --}}
-    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
+    <div class="overflow-hidden rounded-2xl border border-gray-200  bg-white shadow-sm
                 dark:border-gray-700 dark:bg-gray-900">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left">
