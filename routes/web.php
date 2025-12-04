@@ -63,12 +63,10 @@ Route::get('/register', function () {
     return view('auth.register'); // pastikan view ini ada
 })->name('register');
 
-// (Opsional) proses register sederhana – silakan sesuaikan sendiri
-Route::post('/register', function (Request $request) {
-    // Di sini biasanya: validasi, buat user, lalu login / redirect
-    // Sementara cukup redirect balik ke login
-    return redirect()->route('login');
-});
+use App\Http\Controllers\Auth\RegisterController;
+
+// Proses register menggunakan RegisterController
+Route::post('/register', [RegisterController::class, 'register']);
 
 // Lupa password (hanya form, tanpa logic kirim email)
 Route::get('/forgot-password', function () {

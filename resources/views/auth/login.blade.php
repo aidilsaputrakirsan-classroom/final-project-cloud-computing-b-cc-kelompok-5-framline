@@ -3,14 +3,10 @@
 @section('title', 'Login - SI XXI')
 
 @push('styles')
-<!-- Font & Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
     body {
-        background: #000000; /* FULL BLACK */
-        color: #fff;
         font-family: 'Poppins', sans-serif;
         min-height: 100vh;
         overflow-x: hidden;
@@ -36,14 +32,12 @@
     .login-title {
         font-size: 1.4rem;
         font-weight: 600;
-        color: #ffffff;
         margin-bottom: 30px;
     }
 
     .login-box {
         width: 100%;
         max-width: 420px;
-        background: #0a0a0a; /* PURE DARK */
         border-radius: 14px;
         padding: 40px 35px;
         border: 1px solid rgba(255,255,255,0.08);
@@ -56,12 +50,11 @@
         height: 50px;
         border: 1px solid #222;
         border-radius: 8px;
-        background: #000; /* Full black input */
-        color: #fff;
         font-size: 1rem;
         padding: 14px 15px;
         margin-bottom: 20px;
         transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
     }
 
     .form-control:focus {
@@ -80,6 +73,7 @@
         font-weight: 600;
         transition: all 0.3s ease;
         letter-spacing: 0.5px;
+        cursor: pointer;
     }
 
     .btn-login:hover {
@@ -92,7 +86,6 @@
         display: block;
         text-align: center;
         margin-top: 10px;
-        color: #bbb;
         font-weight: 500;
         text-decoration: none;
         transition: 0.2s;
@@ -104,7 +97,6 @@
 
     .login-footer {
         margin-top: 25px;
-        color: #ccc;
         text-align: center;
         font-size: 0.95rem;
     }
@@ -128,37 +120,35 @@
 @endpush
 
 @section('content')
-<div class="login-container">
+<div class="login-container bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <div class="login-logo">🎬 SI XXI</div>
-    <div class="login-title">Welcome Back</div>
+    <div class="login-title text-gray-900 dark:text-gray-100">Welcome Back</div>
 
-    <div class="login-box">
+    <div class="login-box bg-white dark:bg-gray-800 dark:border-gray-700">
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <label for="email" class="block mb-2 text-sm text-gray-300">Email</label>
+            <label for="email" class="block mb-2 text-sm text-gray-600 dark:text-gray-300">Email</label>
             <input id="email" type="text"
-                class="form-control @error('email') is-invalid @enderror"
+                class="form-control @error('email') is-invalid @enderror bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                 name="email" value="{{ old('email') }}" required autofocus>
             @error('email')
-            <span class="text-red-400 text-sm">{{ $message }}</span>
+            <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
-            <label for="password" class="block mb-2 text-sm text-gray-300">Masukkan Password</label>
+            <label for="password" class="block mb-2 text-sm text-gray-600 dark:text-gray-300">Masukkan Password</label>
             <input id="password" type="password"
-                class="form-control @error('password') is-invalid @enderror"
+                class="form-control @error('password') is-invalid @enderror bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                 name="password" required>
             @error('password')
-            <span class="text-red-400 text-sm">{{ $message }}</span>
+            <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span>
             @enderror
 
             <button type="submit" class="btn-login mt-2">Login</button>
-
-            <a href="{{ route('password.request') }}" class="forgot-pin">Lupa PIN?</a>
         </form>
     </div>
 
-    <div class="login-footer">
+    <div class="login-footer text-gray-600 dark:text-gray-300">
         Gak punya akun? <a href="{{ route('register') }}">Yuk, buat akun</a>
     </div>
 </div>
