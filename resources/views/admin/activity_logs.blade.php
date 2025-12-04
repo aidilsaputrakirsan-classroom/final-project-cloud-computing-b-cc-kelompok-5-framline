@@ -125,6 +125,16 @@
                                     <span class="font-semibold">
                                         {{ $log->meta['genre_name'] ?? '(unknown genre)' }}
                                     </span>
+                                @elseif ($log->action === 'add_user')
+                                    Added new regular user:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['added_user_name'] ?? '(unknown user)' }} ({{ $log->meta['added_user_email'] ?? '(unknown email)' }})
+                                    </span>
+                                @elseif ($log->action === 'delete_user')
+                                    Deleted regular user:
+                                    <span class="font-semibold">
+                                        {{ $log->meta['deleted_user_name'] ?? '(unknown user)' }} ({{ $log->meta['deleted_user_email'] ?? '(unknown email)' }})
+                                    </span>
                                 @else
                                     -
                                 @endif

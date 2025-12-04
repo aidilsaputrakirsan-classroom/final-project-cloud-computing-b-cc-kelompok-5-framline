@@ -143,9 +143,20 @@ class FilmController extends Controller
         ]);
 
         try {
-            $poster = $request->hasFile('poster')
-                ? $request->file('poster')->store('posters', 'public')
-                : null;
+            $poster = null;
+            if ($request->hasFile('poster')) {
+                // Store in storage/app/public
+                $poster = $request->file('poster')->store('posters', 'public');
+
+                // Also copy to public/storage for Windows compatibility
+                $sourcePath = storage_path('app/public/' . $poster);
+                $destinationPath = public_path('storage/' . $poster);
+                $destinationDir = dirname($destinationPath);
+                if (!file_exists($destinationDir)) {
+                    mkdir($destinationDir, 0755, true);
+                }
+                copy($sourcePath, $destinationPath);
+            }
 
             \Log::info('Creating film with data:', [
                 'poster' => $poster,
@@ -212,51 +223,73 @@ class FilmController extends Controller
             'poster' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'judul' => 'required|max:255',
             'sinopsis' => 'required',
-            'tahun_rilis' => 'required|integer|min:1900|max:2100',
+            'tahun_rilis' => 'required|date',
             'sutradara' => 'required|max:255',
             'aktor' => 'required|string',
-            'durasi' => 'required|string|max:50',
+            'durasi' => 'required|integer|min:1|max:500',
             'genre_id' => 'required|exists:genres,id',
             'trailer_url' => 'nullable|url',
         ]);
 
-        if ($request->hasFile('poster')) {
-            if ($film->poster) {
-                Storage::disk('public')->delete($film->poster);
+        try {
+            if ($request->hasFile('poster')) {
+                if ($film->poster) {
+                    Storage::disk('public')->delete($film->poster);
+                    // Also delete from public/storage
+                    $oldPath = public_path('storage/' . $film->poster);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+
+                // Store in storage/app/public
+                $film->poster = $request->file('poster')->store('posters', 'public');
+
+                // Also copy to public/storage for Windows compatibility
+                $sourcePath = storage_path('app/public/' . $film->poster);
+                $destinationPath = public_path('storage/' . $film->poster);
+                $destinationDir = dirname($destinationPath);
+                if (!file_exists($destinationDir)) {
+                    mkdir($destinationDir, 0755, true);
+                }
+                copy($sourcePath, $destinationPath);
             }
 
-            $film->poster = $request->file('poster')->store('posters', 'public');
-        }
+            $film->update([
+                'judul' => $request->judul,
+                'sinopsis' => $request->sinopsis,
+                'tahun_rilis' => $request->tahun_rilis,
+                'sutradara' => $request->sutradara,
+                'aktor' => $request->aktor,
+                'durasi' => $request->durasi,
+                'genre_id' => $request->genre_id,
+                'trailer_url' => $request->trailer_url,
+            ]);
 
-        $film->update([
-            'judul' => $request->judul,
-            'sinopsis' => $request->sinopsis,
-            'tahun_rilis' => $request->tahun_rilis,
-            'sutradara' => $request->sutradara,
-            'aktor' => $request->aktor,
-            'durasi' => $request->durasi,
-            'genre_id' => $request->genre_id,
-            'trailer_url' => $request->trailer_url,
-        ]);
-
-        // log film update
-        AuditLog::create([
-            'user_id' => auth()->id(),
-            'film_id' => $film->id,
-            'action' => 'update_film',
-            'performed_at' => now(),
-            'meta' => [
-                'film_title' => $request->judul,
-                'changes' => [
-                    'judul' => $request->judul,
-                    'tahun_rilis' => $request->tahun_rilis,
-                    'genre_id' => $request->genre_id,
+            // log film update
+            AuditLog::create([
+                'user_id' => auth()->id(),
+                'film_id' => $film->id,
+                'action' => 'update_film',
+                'performed_at' => now(),
+                'meta' => [
+                    'film_title' => $request->judul,
+                    'changes' => [
+                        'judul' => $request->judul,
+                        'tahun_rilis' => $request->tahun_rilis,
+                        'genre_id' => $request->genre_id,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        return redirect()->route('admin.films.index')
-            ->with('success', 'Film berhasil diperbarui!');
+            return redirect()->route('admin.films.index')
+                ->with('success', 'Film berhasil diperbarui!');
+        } catch (\Exception $e) {
+            \Log::error('Film update failed:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal memperbarui film: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Film $film)
